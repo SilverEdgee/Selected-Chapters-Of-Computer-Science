@@ -1,0 +1,12 @@
+[project]
+name = "pdd-fastapi-stub"
+version = "0.1.0"
+description = "Инфраструктурная заглушка для проверки Docker Compose"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "asyncpg>=0.29.0",  # Асинхронный драйвер для PostgreSQL
+    "redis>=5.0.0",     # Драйвер для Redis
+]
