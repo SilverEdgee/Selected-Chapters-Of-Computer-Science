@@ -1,13 +1,11 @@
-import os
 import sys
 import circle
 import square
 
-# Читаем переменные из окружения
-r = os.getenv("r")
-a = os.getenv("a")
-
-if r:
-    print(f"Круг: Площадь = {circle.area(float(r))}, Периметр = {circle.perimeter(float(r))}")
-if a:
-    print(f"Квадрат: Площадь = {square.area(float(a))}, Периметр = {square.perimeter(float(a))}")
+# Скрипт ожидает две строки: сначала радиус, потом сторону
+lines = sys.stdin.readlines()
+if len(lines) >= 2:
+    r = float(lines[0].strip())
+    a = float(lines[1].strip())
+    print(f"Круг (из STDIN): {circle.area(r)}")
+    print(f"Квадрат (из STDIN): {square.area(a)}")
