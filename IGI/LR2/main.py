@@ -1,6 +1,9 @@
 import circle
+import square
+import os
 
-# Скрипт просто читает файл по заранее известному пути
-with open("/data/input.txt", "r") as f:
-    val = float(f.read().strip())
-    print(f"Area from file: {circle.area(val)}")
+a = int(os.getenv("a"))
+r = int(os.getenv("r"))
+
+print(f"Square:\nArea: {square.area(a)}\nPerimeter: {square.perimeter(a)}\n")
+print(f"Circle:\nArea: {circle.area(r)}\nPerimeter: {circle.perimeter(r)}\n")
