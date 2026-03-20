@@ -20,3 +20,4 @@ def cube_calculate(numbers: list) -> int:
         result += number ** 3
     return result
 
+

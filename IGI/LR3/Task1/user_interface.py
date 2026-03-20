@@ -63,3 +63,4 @@ def get_yes_no_input(prompt: str) -> bool:
         elif choice in ("n", "no"):
             return False
         print("Please enter yes or no")
+
