@@ -70,16 +70,13 @@ def task5_list_processing(lst: list) -> None:
 
     count = task5a_count_greater_than_c(lst, c)
     print(f"\n  a) Elements greater than {c}: {count}")
+    product, idx = task5b_product_before_max_abs(lst)
+    max_elem = lst[idx]
+    print(f"  b) Max |element| = {max_elem} at index {idx}")
+    if idx == 0:
+        print("     No elements before it — product = 1 (empty product)")
+    else:
+        elems_before = lst[:idx]
+        print(f"     Elements before it: {elems_before}")
+        print(f"     Product = {product:.6f}")
 
-    try:
-        product, idx = task5b_product_before_max_abs(lst)
-        max_elem = lst[idx]
-        print(f"  b) Max |element| = {max_elem} at index {idx}")
-        if idx == 0:
-            print("     No elements before it — product = 1 (empty product)")
-        else:
-            elems_before = lst[:idx]
-            print(f"     Elements before it: {elems_before}")
-            print(f"     Product = {product:.6f}")
-    except ValueError as e:
-        print(f"  Error: {e}")

@@ -13,10 +13,7 @@ from utils import get_float_input, get_int_input, timing_decorator
 
 @timing_decorator
 def task1_arcsin_series() -> None:
-    """
-    Task 1 (Variant 22): Compute arcsin(x) via power series expansion.
-    Prints x, F(x), number of terms, and math.asin(x) for comparison.
-    """
+    """Task1: calculate arcsin series"""
     while True:
         x = get_float_input("  Enter x (|x| < 1): ")
         if abs(x) < 1:
@@ -28,25 +25,32 @@ def task1_arcsin_series() -> None:
         eps = 1e-6
         print(f"eps must be positive. Using default eps = {eps}")
 
-    MAX_ITER = 500
+    max_iter = 500
     total = 0.0
     term = x
-    n = 0
+    n = 1
 
-    while n < MAX_ITER:
+    print(f"\n  {'Iter':>5} | {'Added Term':>15} | {'Running Sum':>15}")
+    print("  " + "-" * 45)
+
+    while n <= max_iter:
         total += term
-        n += 1
-        term *= (2 * n - 1) ** 2 * x * x / (2 * n * (2 * n + 1))
+        print(f"  {n:>5} | {term:>15.8f} | {total:>15.8f}")
+
+        term *= ((2 * n - 1) ** 2 * x * x) / (2 * n * (2 * n + 1))
+
         if abs(term) < eps:
             total += term
             n += 1
+            print(f"  {n:>5} | {term:>15.8f} | {total:>15.8f} ← converged")
             break
+
+        n += 1
 
     math_val = math.asin(x)
     print(f"\n  {'x':>10} | {'F(x) series':>15} | {'n terms':>8} | {'math.asin(x)':>15}")
     print("  " + "-" * 55)
     print(f"  {x:>10.6f} | {total:>15.8f} | {n:>8} | {math_val:>15.8f}")
-
 
 def task2_sum_of_cubes() -> None:
     """
