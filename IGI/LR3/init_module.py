@@ -54,5 +54,5 @@ def init_by_user(sequence: list, n: int) -> list:
                 sequence.append(val)
                 break
             except ValueError:
-                print("    [!] Invalid input. Please enter a real number.")
+                print("   Invalid input. Please enter a real number.")
     return sequence

@@ -2,7 +2,7 @@
 Lab Work #3: Standard Data Types, Collections, Functions, Modules
 Module: math_tasks.py
 Description: Mathematical tasks — power series (Task 1) and numeric loop (Task 2)
-Version: 1.0
+Version: 1.1
 Developer: Pometko D.I., Variant 22
 Date: 20-03-2026
 """
@@ -67,7 +67,7 @@ def task2_sum_of_cubes() -> None:
             continue
 
         if num == 12:
-            print("Number 12 received. Stopping.")
+            print("  Number 12 received. Stopping.")
             break
 
         total += num ** 3
