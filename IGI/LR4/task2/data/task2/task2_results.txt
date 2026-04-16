@@ -1,0 +1,28 @@
+============================================================
+Text Analysis Report — Variant 22
+============================================================
+
+── Common stats ──
+  Total sentences:     12
+  Declarative:         8
+  Interrogative:       2
+  Imperative:          2
+  Avg sentence length: 15.25 chars
+  Avg word length:     3.71 chars
+  Smileys:             4
+
+── Emails with recipient names ──
+  'Alice Johnson'                → alice@example.com
+  'Bob Smith'                    → bob@mail.org
+
+── $v_(i)$ substitution result ──
+  Alice Johnson: alice@example.com sent a message. Bob Smith <bob@mail.org> replied quickly. is it important? it is indeed! The formula v[1] and v[a] but NOT $v_(ab)$. Alice and Bob met Alice again today. is is is. :) ;-( :---[[ ;-) Have you seen the issue? Yes! I agree.
+
+── Words with odd letter count ──
+  alice, johnson, alice, example, com, a, message, bob, smith, bob, org, replied, quickly, important, the, formula, v, and, v, a, but, not, v, alice, and, bob, met, alice, again, today, you, the, issue, yes, i, agree
+
+── Shortest word starting with 'i' ──
+  i
+
+── Duplicate words ──
+  a, alice, and, bob, is, it, the, v
