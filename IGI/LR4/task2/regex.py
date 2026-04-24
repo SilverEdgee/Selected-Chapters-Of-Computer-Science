@@ -20,7 +20,7 @@ class SentenceMixin:
 
     def count_sentences(self) -> dict[str, int]:
         """Count declarative / interrogative / imperative sentences."""
-        text  = self._text  # type: ignore[attr-defined]
+        text  = self._text 
         decl  = len(re.findall(r'[^.!?]+\.', text))
         interr = len(re.findall(r'[^.!?]+\?', text))
         imper  = len(re.findall(r'[^.!?]+!',  text))

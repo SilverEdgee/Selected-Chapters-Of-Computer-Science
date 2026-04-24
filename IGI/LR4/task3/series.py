@@ -141,7 +141,6 @@ class ArcsinAnalyser(StatsMixin, ArcsinSeries):
     Full analyser: arcsin series + statistics + matplotlib.
     """
 
-    # class-level label used in the plot
     series_label: ClassVar[str] = "arcsin Taylor"
 
     def __init__(self, n_terms: int = ArcsinSeries.default_terms) -> None:
