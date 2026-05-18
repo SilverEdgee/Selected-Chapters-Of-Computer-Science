@@ -19,4 +19,3 @@ def fetch_external_api_results(endpoints, timeout=4):
     max_workers = min(4, len(endpoints))
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         return list(executor.map(fetch_one, endpoints))
-
