@@ -101,6 +101,13 @@ class CoreDomainTests(TestCase):
         self.assertEqual(rates[0]['code'], 'USD')
         self.assertEqual(rates[0]['byn_per_unit'], '3.2500')
 
+    @patch('catalog.services.requests.get', side_effect=Exception('timeout'))
+    def test_currency_rates_helper_falls_back_to_defaults(self, _mocked_get):
+        rates = fetch_currency_rates()
+        self.assertEqual(len(rates), 3)
+        self.assertEqual(rates[0]['code'], 'USD')
+        self.assertEqual(rates[0]['byn_per_unit'], '3.2500')
+
     @patch('catalog.services.requests.get')
     def test_minsk_weather_helper(self, mocked_get):
         response = Mock()

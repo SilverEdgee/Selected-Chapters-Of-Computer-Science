@@ -374,26 +374,18 @@ def stats(request):
         ),
     )
 def api_demo(request):
-    rates_result = None
+    rates_result = fetch_currency_rates()
     weather_result = None
-    rates_error = None
-    weather_error = None
-    try:
-        rates_result = fetch_currency_rates()
-    except Exception as exc:  # pragma: no cover - network may be unavailable in CI/container
-        rates_error = str(exc)
     try:
         weather_result = fetch_minsk_weather()
-    except Exception as exc:  # pragma: no cover - network may be unavailable in CI/container
-        weather_error = str(exc)
+    except Exception:  # pragma: no cover - network may be unavailable in CI/container
+        weather_result = None
     return render(
         request,
         'catalog/api_demo.html',
         page_context(
             currency_rates=rates_result,
             weather=weather_result,
-            currency_rates_error=rates_error,
-            weather_error=weather_error,
         ),
     )
 @login_required

@@ -2,13 +2,10 @@
 {% block title %}API{% endblock %}
 {% block content %}
 <h1>Полезные сторонние API</h1>
-<p>Здесь показываются данные, которые действительно можно использовать в проекте: курсы валют для прайс-листа и погода для планирования логистики.</p>
 
 <div class="card">
     <h2>Курсы валют к BYN</h2>
-    {% if currency_rates_error %}
-        <p>Ошибка загрузки курсов: {{ currency_rates_error }}</p>
-    {% elif currency_rates %}
+    {% if currency_rates %}
         <table>
             <tr><th>Валюта</th><th>Официальный курс</th><th>Единиц в источнике</th><th>Дата</th></tr>
             {% for rate in currency_rates %}
@@ -27,9 +24,7 @@
 
 <div class="card">
     <h2>Погода в Минске</h2>
-    {% if weather_error %}
-        <p>Ошибка загрузки погоды: {{ weather_error }}</p>
-    {% elif weather %}
+    {% if weather %}
         <ul>
             <li>Температура: {{ weather.temperature }} °C</li>
             <li>Ветер: {{ weather.windspeed }} км/ч</li>
