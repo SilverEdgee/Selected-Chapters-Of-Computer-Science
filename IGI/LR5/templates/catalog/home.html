@@ -1,0 +1,78 @@
+{% extends 'catalog/base.html' %}
+{% load tz %}
+{% block title %}Главная — Фабрика игрушек{% endblock %}
+{% block content %}
+<h1>Фабрика игрушек</h1>
+<p>Главная страница с последней опубликованной новостью и краткой статистикой.</p>
+<div class="card">
+    <h2>Последняя опубликованная статья</h2>
+    {% if latest_article %}
+        <p><strong>{{ latest_article.title }}</strong></p>
+        {% if latest_article.image_source %}<p><img src="{{ latest_article.image_source }}" alt="{{ latest_article.title }}" style="max-width: 320px; height: auto;"></p>{% endif %}
+        <p>{{ latest_article.summary }}</p>
+        <p>Опубликовано: {{ latest_article.published_at|localtime|date:'d/m/Y H:i' }} / UTC: {{ latest_article.published_at|utc|date:'d/m/Y H:i' }}</p>
+        <p><a href="{% url 'catalog:news_detail' latest_article.pk %}">Читать далее</a></p>
+    {% else %}
+        <p>Пока нет новостей.</p>
+    {% endif %}
+</div>
+<div class="card">
+    <h2>Краткая статистика</h2>
+    <ul>
+        <li>Товаров: {{ stats.products }}</li>
+        <li>Клиентов: {{ stats.clients }}</li>
+        <li>Сотрудников: {{ stats.employees }}</li>
+        <li>Продаж: {{ stats.sales }}</li>
+        <li>Выручка: {{ stats.revenue }}</li>
+    </ul>
+</div>
+<div class="card">
+    <h2>Последний товар</h2>
+    {% if latest_product %}
+        <p><strong>{{ latest_product.name }}</strong> ({{ latest_product.code }})</p>
+        <p>Тип: {{ latest_product.product_type }}</p>
+        <p>Модель: {{ latest_product.toy_model }}</p>
+        <p>Цена: {{ latest_product.price }}</p>
+        <p><a href="{% url 'catalog:product_detail' latest_product.pk %}">Открыть товар</a></p>
+    {% else %}
+        <p>Пока нет товаров.</p>
+    {% endif %}
+</div>
+<div class="card">
+    <h2>График выручки по месяцам</h2>
+    {% if monthly_chart %}
+        <canvas id="homeRevenueChart" height="120"></canvas>
+    {% else %}
+        <p>Недостаточно данных для графика.</p>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_scripts %}
+{{ block.super }}
+{% if monthly_chart %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+(() => {
+    const canvas = document.getElementById('homeRevenueChart');
+    if (!canvas) return;
+    const labels = {{ monthly_chart_labels_json|safe }};
+    const values = {{ monthly_chart_values_json|safe }};
+    new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Выручка',
+                data: values,
+                backgroundColor: '#4a86e8',
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true } },
+        },
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}

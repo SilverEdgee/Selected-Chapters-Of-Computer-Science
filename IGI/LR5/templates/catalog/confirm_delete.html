@@ -1,0 +1,13 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Удаление{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="card">
+    <p>Точно удалить: <strong>{{ object }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Удалить</button>
+        <a href="javascript:history.back()">Отмена</a>
+    </form>
+</div>
+{% endblock %}

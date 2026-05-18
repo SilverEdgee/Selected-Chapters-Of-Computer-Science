@@ -1,0 +1,14 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Словарь терминов и понятий{% endblock %}
+{% block content %}
+<h1>Словарь терминов и понятий</h1>
+{% for entry in entries %}
+    <div class="card">
+        <p><strong>{{ entry.question }}</strong></p>
+        <p>{{ entry.answer }}</p>
+        <p>Добавлено: {{ entry.created_at|date:'d/m/Y' }}</p>
+    </div>
+{% empty %}
+    <p>Пока нет записей.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'catalog/base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block content %}
+<h1>{{ article.title }}</h1>
+<div class="card">
+    {% if article.image_source %}<p><img src="{{ article.image_source }}" alt="{{ article.title }}" style="max-width: 500px; height: auto;"></p>{% endif %}
+    <p>{{ article.summary }}</p>
+    <p>{{ article.body }}</p>
+    <p>Опубликовано: {{ article.published_at|date:'d/m/Y H:i' }}</p>
+</div>
+{% endblock %}
