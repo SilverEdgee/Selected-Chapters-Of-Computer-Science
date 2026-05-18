@@ -1,0 +1,12 @@
+{% extends 'catalog/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{{ submit_label|default:'Сохранить' }}</button>
+    </form>
+</div>
+{% endblock %}

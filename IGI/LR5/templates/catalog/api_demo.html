@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+{% block title %}API{% endblock %}
+{% block content %}
+<h1>Сторонние API</h1>
+{% for item in api_results %}
+    <div class="card">
+        <h2>{{ item.title }}</h2>
+        {% if item.ok %}
+            <pre>{{ item.data|safe }}</pre>
+        {% else %}
+            <p>Ошибка: {{ item.error }}</p>
+        {% endif %}
+    </div>
+{% endfor %}
+{% endblock %}

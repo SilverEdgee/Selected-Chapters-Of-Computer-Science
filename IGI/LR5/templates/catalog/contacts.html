@@ -1,0 +1,16 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Контакты{% endblock %}
+{% block content %}
+<h1>Контакты</h1>
+{% for person in contacts %}
+    <div class="card">
+        <p><strong>{{ person.full_name }}</strong> — {{ person.role }}</p>
+        {% if person.photo_source %}<p><img src="{{ person.photo_source }}" alt="{{ person.full_name }}" style="max-width: 180px; height: auto;"></p>{% endif %}
+        <p>Телефон: {{ person.phone }}</p>
+        <p>Email: {{ person.email }}</p>
+        <p>{{ person.description }}</p>
+    </div>
+{% empty %}
+    <p>Контакты пока не заполнены.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'catalog/base.html' %}
+{% load tz %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p><a href="{% url 'catalog:model_create' model_key %}">Добавить запись</a></p>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Объект</th>
+        <th>Создано (local/UTC)</th>
+        <th>Изменено (local/UTC)</th>
+        <th>Действия</th>
+    </tr>
+    {% for obj in objects %}
+        <tr>
+            <td>{{ obj.id }}</td>
+            <td>{{ obj }}</td>
+            <td>{{ obj.created_at|localtime|date:'d/m/Y H:i' }} / {{ obj.created_at|utc|date:'d/m/Y H:i' }}</td>
+            <td>{{ obj.updated_at|localtime|date:'d/m/Y H:i' }} / {{ obj.updated_at|utc|date:'d/m/Y H:i' }}</td>
+            <td class="actions">
+                <a href="{% url 'catalog:model_update' model_key obj.id %}">Редактировать</a>
+                <a href="{% url 'catalog:model_delete' model_key obj.id %}">Удалить</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="5">Нет записей.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

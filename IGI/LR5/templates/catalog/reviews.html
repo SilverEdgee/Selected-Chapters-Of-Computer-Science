@@ -1,0 +1,26 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Отзывы{% endblock %}
+{% block content %}
+<h1>Отзывы</h1>
+<div class="card">
+    {% if user.is_authenticated %}
+        <h2>Добавить отзыв</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Отправить</button>
+        </form>
+    {% else %}
+        <p>Чтобы добавить отзыв, нужно <a href="{% url 'login' %}">войти</a> или зарегистрироваться.</p>
+    {% endif %}
+</div>
+{% for review in reviews %}
+    <div class="card">
+        <p><strong>{{ review.name }}</strong> — {{ review.rating }}/5</p>
+        <p>{{ review.text }}</p>
+        <p>Дата: {{ review.created_at|date:'d/m/Y H:i' }}</p>
+    </div>
+{% empty %}
+    <p>Пока нет отзывов.</p>
+{% endfor %}
+{% endblock %}

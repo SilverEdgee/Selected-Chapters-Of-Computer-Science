@@ -1,0 +1,27 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Новости{% endblock %}
+{% block content %}
+<h1>Новости</h1>
+{% for article in articles %}
+    <div class="card">
+        <p><strong>{{ article.title }}</strong></p>
+        {% if article.image_source %}<p><img src="{{ article.image_source }}" alt="{{ article.title }}" style="max-width: 220px; height: auto;"></p>{% endif %}
+        <p>{{ article.summary }}</p>
+        <p>Дата: {{ article.published_at|date:'d/m/Y H:i' }}</p>
+        <p><a href="{% url 'catalog:news_detail' article.pk %}">Читать далее</a></p>
+    </div>
+{% empty %}
+    <p>Новостей пока нет.</p>
+{% endfor %}
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<div class="card">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+    {% endif %}
+    <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

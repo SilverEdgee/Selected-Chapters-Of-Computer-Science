@@ -1,0 +1,34 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Кабинет{% endblock %}
+{% block content %}
+<h1>Кабинет</h1>
+{% if profile %}
+    <div class="card">
+        <p><strong>{{ profile }}</strong></p>
+        {% if profile.phone %}<p>Телефон: {{ profile.phone }}</p>{% endif %}
+        {% if profile.city %}<p>Город: {{ profile.city }}</p>{% endif %}
+        {% if profile.position %}<p>Должность: {{ profile.position }}</p>{% endif %}
+    </div>
+{% endif %}
+<div class="card">
+    <h2>Продажи</h2>
+    <table>
+        <tr><th>#</th><th>Клиент</th><th>Сумма</th><th>Дата</th><th>Позиции</th></tr>
+        {% for sale in sales %}
+            <tr>
+                <td>{{ sale.id }}</td>
+                <td>{{ sale.client }}</td>
+                <td>{{ sale.total_amount }}</td>
+                <td>{{ sale.sale_date|date:'d/m/Y H:i' }}</td>
+                <td>
+                    {% for item in sale.items.all %}
+                        {{ item.product.name }} x {{ item.quantity }}{% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">Нет продаж.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

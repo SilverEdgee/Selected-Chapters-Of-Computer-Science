@@ -1,0 +1,80 @@
+{% load static tz %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Фабрика игрушек{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
+        nav a, nav form { margin-right: 12px; display: inline-block; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { padding: 8px 10px; margin-bottom: 6px; background: #eef; }
+        table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+        th, td { border: 1px solid #ccc; padding: 6px 8px; vertical-align: top; }
+        .card { border: 1px solid #ddd; padding: 12px; margin: 12px 0; }
+        .muted { color: #666; }
+        .bar { background: #d9eaff; height: 18px; margin: 4px 0 12px; }
+        .bar > span { display: block; background: #4a86e8; height: 100%; }
+        .actions a { margin-right: 8px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'catalog:home' %}">Главная</a>
+        <a href="{% url 'catalog:about' %}">О компании</a>
+        <a href="{% url 'catalog:news' %}">Новости</a>
+        <a href="{% url 'catalog:glossary' %}">Словарь</a>
+        <a href="{% url 'catalog:contacts' %}">Контакты</a>
+        <a href="{% url 'catalog:vacancies' %}">Вакансии</a>
+        <a href="{% url 'catalog:reviews' %}">Отзывы</a>
+        <a href="{% url 'catalog:promo_codes' %}">Промокоды</a>
+        <a href="{% url 'catalog:products' %}">Товары</a>
+        <a href="{% url 'catalog:stats' %}">Статистика</a>
+        <a href="{% url 'catalog:api_demo' %}">API</a>
+        <a href="{% url 'catalog:dashboard' %}">Кабинет</a>
+        {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post" style="display:inline; margin-left: 12px;">
+                {% csrf_token %}
+                <button type="submit">Выход</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Вход</a>
+            <a href="{% url 'catalog:register' %}">Регистрация</a>
+        {% endif %}
+    </nav>
+    {% if current_dt %}
+        <p class="muted">Текущее время: {{ current_dt|localtime|date:'d/m/Y H:i' }} / UTC: {{ current_dt|utc|date:'d/m/Y H:i' }}</p>
+    {% endif %}
+    {% if user.is_staff or user.is_superuser %}
+    <p class="muted">
+        Управление:
+        <a href="{% url 'catalog:model_list' 'product-types' %}">Типы</a>
+        <a href="{% url 'catalog:model_list' 'toy-models' %}">Модели</a>
+        <a href="{% url 'catalog:model_list' 'tags' %}">Теги</a>
+        <a href="{% url 'catalog:model_list' 'products' %}">Товары</a>
+        <a href="{% url 'catalog:model_list' 'clients' %}">Клиенты</a>
+        <a href="{% url 'catalog:model_list' 'employees' %}">Сотрудники</a>
+        <a href="{% url 'catalog:model_list' 'sales' %}">Продажи</a>
+        <a href="{% url 'catalog:model_list' 'sale-items' %}">Позиции продаж</a>
+        <a href="{% url 'catalog:model_list' 'company-info' %}">О компании</a>
+        <a href="{% url 'catalog:model_list' 'news' %}">Новости</a>
+        <a href="{% url 'catalog:model_list' 'faq' %}">FAQ</a>
+        <a href="{% url 'catalog:model_list' 'contacts' %}">Контакты</a>
+        <a href="{% url 'catalog:model_list' 'vacancies' %}">Вакансии</a>
+        <a href="{% url 'catalog:model_list' 'reviews' %}">Отзывы</a>
+        <a href="{% url 'catalog:model_list' 'promo-codes' %}">Промокоды</a>
+    </p>
+    {% endif %}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

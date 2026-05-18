@@ -1,0 +1,21 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Промокоды и купоны{% endblock %}
+{% block content %}
+<h1>Промокоды и купоны</h1>
+<div class="card">
+    <h2>Действующие</h2>
+    {% for promo in active_promo_codes %}
+        <p><strong>{{ promo.code }}</strong> — {{ promo.description }} ({{ promo.discount_percent }}%)</p>
+    {% empty %}
+        <p>Нет действующих промокодов.</p>
+    {% endfor %}
+</div>
+<div class="card">
+    <h2>Архив</h2>
+    {% for promo in archived_promo_codes %}
+        <p><strong>{{ promo.code }}</strong> — {{ promo.description }} ({{ promo.discount_percent }}%)</p>
+    {% empty %}
+        <p>Архив пуст.</p>
+    {% endfor %}
+</div>
+{% endblock %}

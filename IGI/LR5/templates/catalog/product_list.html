@@ -1,0 +1,58 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Товары{% endblock %}
+{% block content %}
+<h1>Товары</h1>
+<form method="get" class="card">
+    <input type="text" name="q" placeholder="Поиск" value="{{ query }}">
+    <select name="sort">
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>Имя ↑</option>
+        <option value="-name" {% if sort == '-name' %}selected{% endif %}>Имя ↓</option>
+        <option value="price" {% if sort == 'price' %}selected{% endif %}>Цена ↑</option>
+        <option value="-price" {% if sort == '-price' %}selected{% endif %}>Цена ↓</option>
+        <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Дата ↑</option>
+        <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Дата ↓</option>
+    </select>
+    <button type="submit">Применить</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>Код</th>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Модель</th>
+            <th>Цена</th>
+            <th>Теги</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+        <tr>
+            <td>{{ product.code }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.product_type }}</td>
+            <td>{{ product.toy_model }}</td>
+            <td>{{ product.price }}</td>
+            <td>{% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+            <td>
+                <a href="{% url 'catalog:product_detail' product.pk %}">Открыть</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="7">Нет товаров.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<div class="card">
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query|urlencode }}&sort={{ sort|urlencode }}&page={{ page_obj.previous_page_number }}">Предыдущая</a>
+    {% endif %}
+    <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?q={{ query|urlencode }}&sort={{ sort|urlencode }}&page={{ page_obj.next_page_number }}">Следующая</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

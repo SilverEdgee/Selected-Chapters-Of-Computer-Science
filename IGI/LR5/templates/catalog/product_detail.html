@@ -1,0 +1,25 @@
+{% extends 'catalog/base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<h1>{{ product.name }}</h1>
+<div class="card">
+    <p><strong>Код:</strong> {{ product.code }}</p>
+    <p><strong>Тип:</strong> {{ product.product_type }}</p>
+    <p><strong>Модель:</strong> {{ product.toy_model }}</p>
+    <p><strong>Цена:</strong> {{ product.price }}</p>
+    <p><strong>Теги:</strong> {% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% empty %}нет{% endfor %}</p>
+</div>
+<div class="card">
+    <h2>Купить товар</h2>
+    {% if user.is_authenticated and user.client_profile %}
+        <form method="post">
+            {% csrf_token %}
+            {{ purchase_form.as_p }}
+            <p class="muted">Если промокод действителен, скидка будет применена автоматически.</p>
+            <button type="submit">Купить</button>
+        </form>
+    {% else %}
+        <p>Чтобы купить товар, нужно войти как зарегистрированный клиент.</p>
+    {% endif %}
+</div>
+{% endblock %}

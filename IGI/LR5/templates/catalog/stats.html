@@ -1,0 +1,59 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<h1>Статистика</h1>
+<div class="card">
+    <p><strong>Выручка:</strong> {{ revenue|stringformat:'s' }}</p>
+    <p><strong>Средний чек:</strong> {{ avg_sale|stringformat:'s' }}</p>
+</div>
+<div class="card">
+    <h2>Топ товаров по количеству</h2>
+    <table>
+        <tr><th>Товар</th><th>Количество</th></tr>
+        {% for row in top_products %}
+            <tr><td>{{ row.product__name }}</td><td>{{ row.total_qty }}</td></tr>
+        {% empty %}
+            <tr><td colspan="2">Нет данных.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="card">
+    <h2>Продажи по месяцам</h2>
+    {% if monthly_sales %}
+        <canvas id="statsSalesChart" height="120"></canvas>
+    {% else %}
+        <p>Нет данных.</p>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_scripts %}
+{{ block.super }}
+{% if monthly_sales %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+(() => {
+    const canvas = document.getElementById('statsSalesChart');
+    if (!canvas) return;
+    const labels = {{ monthly_sales_labels_json|safe }};
+    const values = {{ monthly_sales_values_json|safe }};
+    new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Продажи',
+                data: values,
+                borderColor: '#4a86e8',
+                backgroundColor: 'rgba(74,134,232,0.2)',
+                fill: true,
+                tension: 0.3,
+            }],
+        },
+        options: {
+            responsive: true,
+        },
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}
