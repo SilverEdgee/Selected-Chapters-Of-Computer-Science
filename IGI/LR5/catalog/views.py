@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from .forms import (
     ClientForm,
     CompanyInfoForm,
@@ -391,6 +392,95 @@ def api_summary(request):
         'revenue': str(Sale.objects.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')),
     }
     return JsonResponse(data)
+
+
+def product_to_dict(p):
+    return {
+        'id': p.id,
+        'code': p.code,
+        'name': p.name,
+        'price': str(p.price),
+        'product_type': p.product_type.name if p.product_type else None,
+    }
+
+
+def api_products_list(request):
+    """Return JSON list of products. Supports ?q= filter by name or code and pagination via ?page="""
+    qs = Product.objects.select_related('product_type').all()
+    q = request.GET.get('q', '').strip()
+    if q:
+        qs = qs.filter(Q(name__icontains=q) | Q(code__icontains=q)).distinct()
+    page = int(request.GET.get('page', '1') or '1')
+    per = int(request.GET.get('per', '20') or '20')
+    start = (page - 1) * per
+    end = start + per
+    items = [product_to_dict(p) for p in qs.order_by('name')[start:end]]
+    return JsonResponse({'count': qs.count(), 'page': page, 'per': per, 'items': items})
+
+
+def api_product_detail(request, pk):
+    p = get_object_or_404(Product.objects.select_related('product_type').prefetch_related('tags'), pk=pk)
+    data = product_to_dict(p)
+    data.update({
+        'toy_model': p.toy_model.name if p.toy_model else None,
+        'is_active': p.is_active,
+        'tags': [t.name for t in p.tags.all()],
+    })
+    return JsonResponse(data)
+
+
+@login_required
+@require_http_methods(['POST'])
+def api_purchase(request):
+    """Create a Sale for authenticated client users.
+    Expected POST data: product (id), quantity (int), promo_code (optional)
+    Returns sale id and total amount.
+    """
+    if not hasattr(request.user, 'client_profile') or request.user.client_profile is None:
+        return JsonResponse({'error': 'Only registered clients can create purchases.'}, status=403)
+    try:
+        payload = request.POST
+        product_id = int(payload.get('product'))
+        quantity = int(payload.get('quantity', 1))
+    except Exception:
+        return JsonResponse({'error': 'Invalid parameters'}, status=400)
+    product = get_object_or_404(Product, pk=product_id)
+    promo = None
+    promo_code = payload.get('promo_code')
+    if promo_code:
+        promo = PromoCode.objects.filter(code=promo_code, is_active=True).first()
+    discount_percent = promo.discount_percent if promo else 0
+    with transaction.atomic():
+        sale = Sale.objects.create(client=request.user.client_profile, promo_code=promo, discount_percent=discount_percent)
+        SaleItem.objects.create(sale=sale, product=product, quantity=quantity, unit_price=product.price)
+    return JsonResponse({'sale_id': sale.id, 'total_amount': str(sale.total_amount)})
+
+
+@login_required
+def api_clients_by_city(request):
+    if not (request.user.is_staff or request.user.is_superuser):
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+    data = list(Client.objects.values('city').annotate(count=Count('id')).order_by('-count'))
+    return JsonResponse({'cities': data})
+
+
+@login_required
+def api_employee_sales(request):
+    # Return sales for the employee user (employee must have an Employee profile)
+    profile = getattr(request.user, 'employee_profile', None)
+    if profile is None:
+        return JsonResponse({'error': 'Only employees can access this endpoint.'}, status=403)
+    qs = Sale.objects.filter(employee=profile).select_related('client').prefetch_related('items__product').order_by('-sale_date')
+    items = []
+    for s in qs:
+        items.append({
+            'id': s.id,
+            'client': s.client.full_name if s.client else None,
+            'total_amount': str(s.total_amount),
+            'sale_date': s.sale_date.isoformat(),
+            'items': [{'product': it.product.name, 'qty': it.quantity, 'unit_price': str(it.unit_price)} for it in s.items.all()],
+        })
+    return JsonResponse({'sales': items})
 @login_required
 def dashboard(request):
     if request.user.is_staff or request.user.is_superuser:

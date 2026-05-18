@@ -232,3 +232,52 @@ class CoreDomainTests(TestCase):
         response = self.client.post(reverse('logout'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Фабрика игрушек')
+
+    # --- API tests ---
+    def test_api_products_list_and_detail(self):
+        response = self.client.get(reverse('catalog:api_products_list'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('items', data)
+        first = data['items'][0]
+        detail = self.client.get(reverse('catalog:api_product_detail', args=[first['id']]))
+        self.assertEqual(detail.status_code, 200)
+        det = detail.json()
+        self.assertEqual(det['id'], first['id'])
+
+    def test_api_purchase_requires_client(self):
+        # anonymous should be redirected to login
+        response = self.client.post(reverse('catalog:api_purchase'), {'product': self.product_1.pk, 'quantity': 1})
+        self.assertEqual(response.status_code, 302)
+        # client user can purchase
+        self.client.force_login(self.client_user)
+        response = self.client.post(reverse('catalog:api_purchase'), {'product': self.product_1.pk, 'quantity': 2})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('sale_id', data)
+
+    def test_api_clients_by_city_requires_staff(self):
+        # regular client forbidden
+        self.client.force_login(self.client_user)
+        resp = self.client.get(reverse('catalog:api_clients_by_city'))
+        self.assertEqual(resp.status_code, 403)
+        # staff allowed
+        self.client.force_login(self.employee_user)
+        resp = self.client.get(reverse('catalog:api_clients_by_city'))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_api_employee_sales_for_employee(self):
+        # create a sale assigned to employee
+        sale = Sale.objects.create(client=self.client_profile, employee=self.employee)
+        SaleItem.objects.create(sale=sale, product=self.product_2, quantity=3, unit_price=self.product_2.price)
+        # non-employee cannot access
+        self.client.force_login(self.client_user)
+        resp = self.client.get(reverse('catalog:api_employee_sales'))
+        self.assertEqual(resp.status_code, 403)
+        # employee can access
+        self.client.force_login(self.employee_user)
+        resp = self.client.get(reverse('catalog:api_employee_sales'))
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('sales', data)
+

@@ -18,6 +18,12 @@ urlpatterns = [
     path('stats/', views.stats, name='stats'),
     path('apis/', views.api_demo, name='api_demo'),
     path('api/summary/', views.api_summary, name='api_summary'),
+    # New JSON API endpoints
+    path('api/v1/products/', views.api_products_list, name='api_products_list'),
+    path('api/v1/products/<int:pk>/', views.api_product_detail, name='api_product_detail'),
+    path('api/v1/purchase/', views.api_purchase, name='api_purchase'),
+    path('api/v1/clients/by-city/', views.api_clients_by_city, name='api_clients_by_city'),
+    path('api/v1/employee/sales/', views.api_employee_sales, name='api_employee_sales'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('register/', views.register, name='register'),
     re_path(r'^manage/(?P<model_key>[\w-]+)/$', views.model_list, name='model_list'),
