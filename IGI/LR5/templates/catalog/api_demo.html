@@ -7,13 +7,12 @@
     <h2>Курсы валют к BYN</h2>
     {% if currency_rates %}
         <table>
-            <tr><th>Валюта</th><th>Официальный курс</th><th>Единиц в источнике</th><th>Дата</th></tr>
+            <tr><th>Валюта</th><th>Официальный курс</th><th>Единиц в источнике</th></tr>
             {% for rate in currency_rates %}
                 <tr>
                     <td>{{ rate.code }} — {{ rate.name }}</td>
                     <td>{{ rate.byn_per_unit }} BYN</td>
                     <td>{{ rate.scale }}</td>
-                    <td>{{ rate.date }}</td>
                 </tr>
             {% endfor %}
         </table>

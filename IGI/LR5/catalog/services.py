@@ -29,9 +29,9 @@ def fetch_currency_rates(timeout=4):
     """
     currencies = ['USD', 'EUR', 'RUB']
     fallback = {
-        'USD': {'name': 'Доллар США', 'scale': 1, 'byn_per_unit': '3.2500', 'date': 'резервные данные'},
-        'EUR': {'name': 'Евро', 'scale': 1, 'byn_per_unit': '3.5500', 'date': 'резервные данные'},
-        'RUB': {'name': 'Российский рубль', 'scale': 100, 'byn_per_unit': '3.6000', 'date': 'резервные данные'},
+        'USD': {'name': 'Доллар США', 'scale': 1, 'byn_per_unit': '3.2500'},
+        'EUR': {'name': 'Евро', 'scale': 1, 'byn_per_unit': '3.5500'},
+        'RUB': {'name': 'Российский рубль', 'scale': 100, 'byn_per_unit': '3.6000'},
     }
     rates = []
     for code in currencies:
@@ -57,7 +57,6 @@ def fetch_currency_rates(timeout=4):
                 'name': fb['name'],
                 'scale': fb['scale'],
                 'byn_per_unit': fb['byn_per_unit'],
-                'date': fb['date'],
             })
     return rates
 
