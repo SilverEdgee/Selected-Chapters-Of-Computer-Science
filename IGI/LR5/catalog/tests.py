@@ -202,6 +202,19 @@ class CoreDomainTests(TestCase):
         self.assertNotContains(response, 'Краткая статистика')
         self.assertNotContains(response, 'График выручки по месяцам')
 
+    def test_home_hides_stats_for_anonymous_users(self):
+        sale = Sale.objects.create(client=self.client_profile, employee=self.employee)
+        SaleItem.objects.create(sale=sale, product=self.product_2, quantity=1, unit_price=self.product_2.price)
+        response = self.client.get(reverse('catalog:home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Краткая статистика')
+        self.assertNotContains(response, 'График выручки по месяцам')
+
+    def test_stats_page_redirects_anonymous_users(self):
+        response = self.client.get(reverse('catalog:stats'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response.url)
+
     def test_home_shows_stats_for_superuser(self):
         sale = Sale.objects.create(client=self.client_profile, employee=self.employee)
         SaleItem.objects.create(sale=sale, product=self.product_2, quantity=1, unit_price=self.product_2.price)
