@@ -1,13 +1,19 @@
 import logging
 import json
+import io
+import base64
 from decimal import Decimal
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from django.contrib import messages
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.db.models import Avg, Q, Sum
-from django.db.models.functions import TruncMonth
+from django.db.models import Avg, Q, Sum, Count, F
+from django.db.models.functions import TruncMonth, TruncYear
+from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
@@ -60,9 +66,8 @@ def is_superuser_user(user):
 
 
 def can_manage_model(user, model_key):
-    if model_key == 'product-types':
-        return user.is_authenticated and user.is_superuser
-    return is_staff_user(user)
+    # Only superusers can manage models now (employees are not allowed CRUD)
+    return user.is_authenticated and user.is_superuser
 MODEL_SPECS = {
     'product-types': {'model': ProductType, 'form': ProductTypeForm, 'title': 'Типы игрушек'},
     'toy-models': {'model': ToyModel, 'form': ToyModelForm, 'title': 'Модели игрушек'},
@@ -212,23 +217,144 @@ def product_detail(request, pk):
 def stats(request):
     if not request.user.is_superuser:
         raise PermissionDenied
+    # Aggregates
     revenue = Sale.objects.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
     avg_sale = Sale.objects.aggregate(avg=Avg('total_amount'))['avg'] or Decimal('0.00')
+
+    # Top and least popular products
     top_products = (
         SaleItem.objects.values('product__name')
         .annotate(total_qty=Sum('quantity'))
         .order_by('-total_qty', 'product__name')[:10]
     )
-    monthly_sales = (
+    # Products with zero sales
+    products_qty = (
+        Product.objects.annotate(qty=Coalesce(Sum('sale_items__quantity'), 0)).values('id', 'name', 'qty')
+    )
+    least_popular = [p for p in products_qty if p['qty'] == 0][:10]
+
+    # Clients by city
+    clients_by_city = Client.objects.values('city').annotate(count=Count('id')).order_by('-count')
+
+    # Price list by product type
+    price_list = {}
+    for p in Product.objects.select_related('product_type').order_by('product_type__name', 'name'):
+        key = p.product_type.name if p.product_type else '—'
+        price_list.setdefault(key, []).append({'name': p.name, 'price': p.price})
+
+    # Monthly sales totals
+    monthly_sales_qs = (
         Sale.objects.annotate(month=TruncMonth('sale_date'))
         .values('month')
         .annotate(total=Sum('total_amount'))
         .order_by('month')
     )
-    monthly_sales_chart = [
-        {'label': timezone.localtime(row['month']).strftime('%m/%Y') if row['month'] else '—', 'value': float(row['total'] or Decimal('0.00'))}
-        for row in monthly_sales
-    ]
+    months = [row['month'] for row in monthly_sales_qs]
+    month_labels = [timezone.localtime(m).strftime('%m/%Y') if m else '—' for m in months]
+    month_values = [float(row['total'] or Decimal('0.00')) for row in monthly_sales_qs]
+
+    # Monthly sales by product type
+    monthly_by_type_qs = (
+        SaleItem.objects.annotate(month=TruncMonth('sale__sale_date'), type=F('product__product_type__name'))
+        .values('month', 'type')
+        .annotate(total_qty=Sum('quantity'))
+        .order_by('month', 'type')
+    )
+    # Build a mapping: {type: {month_label: qty}}
+    types = set()
+    monthly_by_type = {}
+    for row in monthly_by_type_qs:
+        t = row['type'] or '—'
+        types.add(t)
+        label = timezone.localtime(row['month']).strftime('%m/%Y') if row['month'] else '—'
+        monthly_by_type.setdefault(t, {})[label] = row['total_qty']
+    types = sorted(types)
+
+    # Yearly receipts
+    yearly_qs = (
+        Sale.objects.annotate(year=TruncYear('sale_date')).values('year').annotate(total=Sum('total_amount')).order_by('year')
+    )
+    years = [row['year'] for row in yearly_qs]
+    year_labels = [y.year for y in years]
+    year_values = [float(row['total'] or Decimal('0.00')) for row in yearly_qs]
+
+    # Helper: render matplotlib fig to base64 data uri
+    def fig_to_datauri(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight')
+        plt.close(fig)
+        buf.seek(0)
+        data = base64.b64encode(buf.read()).decode('ascii')
+        return f'data:image/png;base64,{data}'
+
+    # Monthly totals plot (with linear trend and 3-month forecast)
+    monthly_plot_uri = None
+    if month_labels:
+        fig, ax = plt.subplots(figsize=(8, 3))
+        xs = list(range(len(month_values)))
+        ys = month_values
+        ax.plot(month_labels, ys, marker='o', label='Факт')
+        # Linear regression
+        n = len(xs)
+        sum_x = sum(xs)
+        sum_y = sum(ys)
+        sum_x2 = sum(x * x for x in xs)
+        sum_xy = sum(x * y for x, y in zip(xs, ys))
+        denom = n * sum_x2 - sum_x * sum_x
+        if denom != 0:
+            slope = (n * sum_xy - sum_x * sum_y) / denom
+            intercept = (sum_y - slope * sum_x) / n
+            fit = [intercept + slope * x for x in xs]
+            ax.plot(month_labels, fit, linestyle='--', color='orange', label='Тренд')
+            # forecast next 3 months
+            fx = [n + i for i in range(3)]
+            f_labels = []
+            last_month = months[-1]
+            import datetime
+            for i in range(1, 4):
+                # add months
+                year = last_month.year + (last_month.month + i - 1) // 12
+                month = (last_month.month + i - 1) % 12 + 1
+                f_labels.append(f'{month:02d}/{year}')
+            f_values = [intercept + slope * x for x in fx]
+            ax.plot(f_labels, f_values, linestyle=':', marker='x', color='green', label='Прогноз')
+        ax.set_title('Месячная выручка')
+        ax.set_ylabel('Сумма')
+        ax.legend()
+        monthly_plot_uri = fig_to_datauri(fig)
+
+    # Monthly by type plot
+    monthly_by_type_uri = None
+    if month_labels and types:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        for t in types:
+            series = [monthly_by_type.get(t, {}).get(lbl, 0) for lbl in month_labels]
+            ax.plot(month_labels, series, marker='o', label=t)
+        ax.set_title('Месячные продажи по типам (шт)')
+        ax.set_ylabel('Количество')
+        ax.legend()
+        monthly_by_type_uri = fig_to_datauri(fig)
+
+    # Yearly receipts plot
+    yearly_plot_uri = None
+    if year_labels:
+        fig, ax = plt.subplots(figsize=(6, 3))
+        ax.bar([str(y) for y in year_labels], year_values, color='#4a86e8')
+        ax.set_title('Годовой отчёт поступлений')
+        ax.set_ylabel('Сумма')
+        yearly_plot_uri = fig_to_datauri(fig)
+
+    # Clients by city plot
+    clients_by_city_uri = None
+    if clients_by_city:
+        fig, ax = plt.subplots(figsize=(6, 3))
+        labels = [row['city'] for row in clients_by_city]
+        vals = [row['count'] for row in clients_by_city]
+        ax.bar(labels, vals, color='#6aa84f')
+        ax.set_title('Клиенты по городам')
+        ax.set_ylabel('Число клиентов')
+        clients_by_city_uri = fig_to_datauri(fig)
+
     return render(
         request,
         'catalog/stats.html',
@@ -236,9 +362,15 @@ def stats(request):
             revenue=revenue,
             avg_sale=avg_sale,
             top_products=top_products,
-            monthly_sales=monthly_sales,
-            monthly_sales_labels_json=json.dumps([row['label'] for row in monthly_sales_chart], ensure_ascii=False),
-            monthly_sales_values_json=json.dumps([row['value'] for row in monthly_sales_chart]),
+            least_popular=least_popular,
+            clients_by_city=clients_by_city,
+            price_list=price_list,
+            monthly_labels=month_labels,
+            monthly_values=month_values,
+            monthly_plot_uri=monthly_plot_uri,
+            monthly_by_type_uri=monthly_by_type_uri,
+            yearly_plot_uri=yearly_plot_uri,
+            clients_by_city_uri=clients_by_city_uri,
         ),
     )
 @login_required

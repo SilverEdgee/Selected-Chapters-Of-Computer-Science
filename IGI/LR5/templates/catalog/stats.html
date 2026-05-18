@@ -17,12 +17,57 @@
         {% endfor %}
     </table>
 </div>
+
 <div class="card">
-    <h2>Продажи по месяцам</h2>
-    {% if monthly_sales %}
-        <canvas id="statsSalesChart" height="120"></canvas>
-    {% else %}
-        <p>Нет данных.</p>
+    <h2>Товары без продаж</h2>
+    <table>
+        <tr><th>Товар</th><th>Продано шт.</th></tr>
+        {% for p in least_popular %}
+            <tr><td>{{ p.name }}</td><td>{{ p.qty }}</td></tr>
+        {% empty %}
+            <tr><td colspan="2">Нет данных.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Прайс-лист по типам</h2>
+    {% for t, items in price_list.items %}
+        <h3>{{ t }}</h3>
+        <table>
+            <tr><th>Название</th><th>Цена</th></tr>
+            {% for item in items %}
+                <tr><td>{{ item.name }}</td><td>{{ item.price }}</td></tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h2>Клиенты по городам</h2>
+    <table>
+        <tr><th>Город</th><th>Клиентов</th></tr>
+        {% for row in clients_by_city %}
+            <tr><td>{{ row.city }}</td><td>{{ row.count }}</td></tr>
+        {% empty %}
+            <tr><td colspan="2">Нет данных.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Графики</h2>
+    {% if monthly_plot_uri %}
+        <div><img src="{{ monthly_plot_uri }}" alt="Месячная выручка"></div>
+    {% endif %}
+    {% if monthly_by_type_uri %}
+        <div><img src="{{ monthly_by_type_uri }}" alt="Месячные продажи по типам"></div>
+    {% endif %}
+    {% if yearly_plot_uri %}
+        <div><img src="{{ yearly_plot_uri }}" alt="Годовой отчёт"></div>
+    {% endif %}
+    {% if clients_by_city_uri %}
+        <div><img src="{{ clients_by_city_uri }}" alt="Клиенты по городам"></div>
     {% endif %}
 </div>
 {% endblock %}
