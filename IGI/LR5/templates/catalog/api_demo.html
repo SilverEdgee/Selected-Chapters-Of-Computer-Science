@@ -1,15 +1,44 @@
 {% extends 'catalog/base.html' %}
 {% block title %}API{% endblock %}
 {% block content %}
-<h1>Сторонние API</h1>
-{% for item in api_results %}
-    <div class="card">
-        <h2>{{ item.title }}</h2>
-        {% if item.ok %}
-            <pre>{{ item.data|safe }}</pre>
-        {% else %}
-            <p>Ошибка: {{ item.error }}</p>
-        {% endif %}
-    </div>
-{% endfor %}
+<h1>Полезные сторонние API</h1>
+<p>Здесь показываются данные, которые действительно можно использовать в проекте: курсы валют для прайс-листа и погода для планирования логистики.</p>
+
+<div class="card">
+    <h2>Курсы валют к BYN</h2>
+    {% if currency_rates_error %}
+        <p>Ошибка загрузки курсов: {{ currency_rates_error }}</p>
+    {% elif currency_rates %}
+        <table>
+            <tr><th>Валюта</th><th>Официальный курс</th><th>Единиц в источнике</th><th>Дата</th></tr>
+            {% for rate in currency_rates %}
+                <tr>
+                    <td>{{ rate.code }} — {{ rate.name }}</td>
+                    <td>{{ rate.byn_per_unit }} BYN</td>
+                    <td>{{ rate.scale }}</td>
+                    <td>{{ rate.date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Нет данных.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Погода в Минске</h2>
+    {% if weather_error %}
+        <p>Ошибка загрузки погоды: {{ weather_error }}</p>
+    {% elif weather %}
+        <ul>
+            <li>Температура: {{ weather.temperature }} °C</li>
+            <li>Ветер: {{ weather.windspeed }} км/ч</li>
+            <li>Направление ветра: {{ weather.winddirection }}°</li>
+            <li>Код погоды: {{ weather.weathercode }}</li>
+            <li>Время измерения: {{ weather.time }}</li>
+        </ul>
+    {% else %}
+        <p>Нет данных.</p>
+    {% endif %}
+</div>
 {% endblock %}

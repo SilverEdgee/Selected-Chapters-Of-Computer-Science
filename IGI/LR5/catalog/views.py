@@ -19,7 +19,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
 from .forms import (
     ClientForm,
     CompanyInfoForm,
@@ -39,7 +38,7 @@ from .forms import (
     ToyModelForm,
     VacancyForm,
 )
-from .services import fetch_external_api_results
+from .services import fetch_currency_rates, fetch_minsk_weather
 from .models import (
     Client,
     CompanyInfo,
@@ -374,14 +373,29 @@ def stats(request):
             clients_by_city_uri=clients_by_city_uri,
         ),
     )
-@login_required
 def api_demo(request):
-    endpoints = [
-        ('Chuck Norris', 'https://api.chucknorris.io/jokes/random'),
-        ('Agify', 'https://api.agify.io/?name=anna'),
-    ]
-    api_results = fetch_external_api_results(endpoints)
-    return render(request, 'catalog/api_demo.html', page_context(api_results=api_results))
+    rates_result = None
+    weather_result = None
+    rates_error = None
+    weather_error = None
+    try:
+        rates_result = fetch_currency_rates()
+    except Exception as exc:  # pragma: no cover - network may be unavailable in CI/container
+        rates_error = str(exc)
+    try:
+        weather_result = fetch_minsk_weather()
+    except Exception as exc:  # pragma: no cover - network may be unavailable in CI/container
+        weather_error = str(exc)
+    return render(
+        request,
+        'catalog/api_demo.html',
+        page_context(
+            currency_rates=rates_result,
+            weather=weather_result,
+            currency_rates_error=rates_error,
+            weather_error=weather_error,
+        ),
+    )
 @login_required
 def api_summary(request):
     data = {

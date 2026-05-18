@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from .forms import RegistrationForm
-from .services import fetch_external_api_results
+from .services import fetch_external_api_results, fetch_currency_rates, fetch_minsk_weather
 from .models import Client as ToyClient, ContactPerson, Employee, NewsArticle, Product, ProductType, PromoCode, Review, Sale, SaleItem, Tag, ToyModel
 from unittest.mock import Mock, patch
 def adult_birth_date(years=25):
@@ -63,10 +63,9 @@ class CoreDomainTests(TestCase):
         response = self.client.post(reverse('catalog:reviews'), {'rating': 5, 'text': 'Отлично!'}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Review.objects.count(), 1)
-    def test_api_requires_login(self):
+    def test_api_demo_is_public(self):
         response = self.client.get(reverse('catalog:api_demo'))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('/accounts/login/', response.url)
+        self.assertEqual(response.status_code, 200)
         summary = self.client.get(reverse('catalog:api_summary'))
         self.assertEqual(summary.status_code, 302)
     @patch('catalog.services.requests.get')
@@ -82,18 +81,55 @@ class CoreDomainTests(TestCase):
         self.assertEqual(len(results), 2)
         self.assertTrue(all(item['ok'] for item in results))
         self.assertEqual(mocked_get.call_count, 2)
-    @patch('catalog.views.fetch_external_api_results')
-    def test_api_demo_success(self, mocked_fetch):
-        mocked_fetch.return_value = [
-            {'title': 'Chuck Norris', 'ok': True, 'data': {'value': 'joke'}},
-            {'title': 'Agify', 'ok': True, 'data': {'age': 28}},
+
+    @patch('catalog.services.requests.get')
+    def test_currency_rates_helper(self, mocked_get):
+        def side_effect(url, timeout=4):
+            response = Mock()
+            response.raise_for_status.return_value = None
+            if 'USD' in url:
+                response.json.return_value = {'Cur_Name': 'Доллар США', 'Cur_Scale': 1, 'Cur_OfficialRate': 3.25, 'Date': '2026-05-18T00:00:00'}
+            elif 'EUR' in url:
+                response.json.return_value = {'Cur_Name': 'Евро', 'Cur_Scale': 1, 'Cur_OfficialRate': 3.55, 'Date': '2026-05-18T00:00:00'}
+            else:
+                response.json.return_value = {'Cur_Name': 'Российский рубль', 'Cur_Scale': 100, 'Cur_OfficialRate': 3.4, 'Date': '2026-05-18T00:00:00'}
+            return response
+
+        mocked_get.side_effect = side_effect
+        rates = fetch_currency_rates()
+        self.assertEqual(len(rates), 3)
+        self.assertEqual(rates[0]['code'], 'USD')
+        self.assertEqual(rates[0]['byn_per_unit'], '3.2500')
+
+    @patch('catalog.services.requests.get')
+    def test_minsk_weather_helper(self, mocked_get):
+        response = Mock()
+        response.raise_for_status.return_value = None
+        response.json.return_value = {'current_weather': {'temperature': 18.5, 'windspeed': 4.1, 'winddirection': 120, 'weathercode': 1, 'time': '2026-05-18T12:00'}}
+        mocked_get.return_value = response
+        weather = fetch_minsk_weather()
+        self.assertEqual(weather['temperature'], 18.5)
+        self.assertEqual(weather['windspeed'], 4.1)
+
+    @patch('catalog.views.fetch_currency_rates')
+    @patch('catalog.views.fetch_minsk_weather')
+    def test_api_demo_success(self, mocked_weather, mocked_rates):
+        mocked_rates.return_value = [
+            {'code': 'USD', 'name': 'Доллар США', 'scale': 1, 'byn_per_unit': '3.2500', 'date': '2026-05-18'},
         ]
-        self.client.force_login(self.client_user)
+        mocked_weather.return_value = {
+            'temperature': 18.5,
+            'windspeed': 4.1,
+            'winddirection': 120,
+            'weathercode': 1,
+            'time': '2026-05-18T12:00',
+        }
         response = self.client.get(reverse('catalog:api_demo'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Chuck Norris')
-        self.assertContains(response, 'Agify')
-        mocked_fetch.assert_called_once()
+        self.assertContains(response, 'Курсы валют к BYN')
+        self.assertContains(response, 'Погода в Минске')
+        mocked_rates.assert_called_once()
+        mocked_weather.assert_called_once()
     def test_register_view_creates_client(self):
         response = self.client.post(reverse('catalog:register'), {
             'username': 'newclient',
