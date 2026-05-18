@@ -55,3 +55,9 @@ INFO 2026-05-18 11:36:47,542 views Удалён объект product-types: Ра
 INFO 2026-05-18 11:50:50,341 autoreload Watching for file changes with StatReloader
 INFO 2026-05-18 11:51:12,607 autoreload Watching for file changes with StatReloader
 INFO 2026-05-18 11:53:52,866 views Обновлён объект products: Игрушка 1 (TOY-001)
+INFO 2026-05-18 12:30:04,680 views Создана покупка product=1 client=1 qty=3 promo=None discount=0
+INFO 2026-05-18 12:30:05,523 views Создана покупка product=1 client=1 qty=5 promo=TOY20 discount=20
+INFO 2026-05-18 12:30:06,885 views Создан пользователь newclient
+INFO 2026-05-18 12:30:09,451 views Создан объект product-types: Развивающие
+INFO 2026-05-18 12:30:09,465 views Обновлён объект product-types: Развивающие обновлённые
+INFO 2026-05-18 12:30:09,478 views Удалён объект product-types: Развивающие обновлённые

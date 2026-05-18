@@ -63,6 +63,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'catalog:dashboard'
 LOGOUT_REDIRECT_URL = 'catalog:home'
 LOGIN_URL = 'login'
+LOG_FILE = BASE_DIR / 'logs' / 'django.log'
+LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -79,7 +82,7 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
+            'filename': str(LOG_FILE),
             'formatter': 'verbose',
         },
     },
