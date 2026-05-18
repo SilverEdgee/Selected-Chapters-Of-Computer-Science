@@ -1,6 +1,7 @@
 """
 Django settings for toy_factory_site project.
 """
+import os
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-toy-factory-dev-key'
@@ -65,6 +66,16 @@ LOGOUT_REDIRECT_URL = 'catalog:home'
 LOGIN_URL = 'login'
 LOG_FILE = BASE_DIR / 'logs' / 'django.log'
 LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+_csrf_trusted_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in _csrf_trusted_origins.split(',')
+    if origin.strip()
+] or [
+    'https://selected-chapters-of-computer-science-production.up.railway.app',
+    'https://*.up.railway.app',
+]
 
 LOGGING = {
     'version': 1,
