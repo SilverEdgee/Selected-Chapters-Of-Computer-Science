@@ -3,6 +3,7 @@ import json
 from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth import login
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Sum
@@ -52,6 +53,16 @@ from .models import (
 logger = logging.getLogger(__name__)
 def is_staff_user(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
+
+
+def is_superuser_user(user):
+    return user.is_authenticated and user.is_superuser
+
+
+def can_manage_model(user, model_key):
+    if model_key == 'product-types':
+        return user.is_authenticated and user.is_superuser
+    return is_staff_user(user)
 MODEL_SPECS = {
     'product-types': {'model': ProductType, 'form': ProductTypeForm, 'title': 'Типы игрушек'},
     'toy-models': {'model': ToyModel, 'form': ToyModelForm, 'title': 'Модели игрушек'},
@@ -80,23 +91,30 @@ def page_context(**kwargs):
 def home(request):
     latest_article = NewsArticle.objects.filter(is_published=True).order_by('-published_at').first()
     latest_product = Product.objects.select_related('product_type', 'toy_model').prefetch_related('tags').order_by('-created_at').first()
-    stats = {
-        'products': Product.objects.count(),
-        'clients': Client.objects.count(),
-        'employees': Employee.objects.count(),
-        'sales': Sale.objects.count(),
-        'revenue': Sale.objects.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00'),
-    }
-    monthly = (
-        Sale.objects.annotate(month=TruncMonth('sale_date'))
-        .values('month')
-        .annotate(total=Sum('total_amount'))
-        .order_by('-month')[:6]
-    )
-    monthly_chart = [
-        {'label': timezone.localtime(item['month']).strftime('%m/%Y') if item['month'] else '—', 'value': float(item['total'] or Decimal('0.00'))}
-        for item in reversed(list(monthly))
-    ]
+    stats = None
+    monthly_chart = []
+    monthly_chart_labels_json = '[]'
+    monthly_chart_values_json = '[]'
+    if request.user.is_authenticated and request.user.is_superuser:
+        stats = {
+            'products': Product.objects.count(),
+            'clients': Client.objects.count(),
+            'employees': Employee.objects.count(),
+            'sales': Sale.objects.count(),
+            'revenue': Sale.objects.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00'),
+        }
+        monthly = (
+            Sale.objects.annotate(month=TruncMonth('sale_date'))
+            .values('month')
+            .annotate(total=Sum('total_amount'))
+            .order_by('-month')[:6]
+        )
+        monthly_chart = [
+            {'label': timezone.localtime(item['month']).strftime('%m/%Y') if item['month'] else '—', 'value': float(item['total'] or Decimal('0.00'))}
+            for item in reversed(list(monthly))
+        ]
+        monthly_chart_labels_json = json.dumps([row['label'] for row in monthly_chart], ensure_ascii=False)
+        monthly_chart_values_json = json.dumps([row['value'] for row in monthly_chart])
     return render(
         request,
         'catalog/home.html',
@@ -105,8 +123,8 @@ def home(request):
             latest_product=latest_product,
             stats=stats,
             monthly_chart=monthly_chart,
-            monthly_chart_labels_json=json.dumps([row['label'] for row in monthly_chart], ensure_ascii=False),
-            monthly_chart_values_json=json.dumps([row['value'] for row in monthly_chart]),
+            monthly_chart_labels_json=monthly_chart_labels_json,
+            monthly_chart_values_json=monthly_chart_values_json,
         ),
     )
 def about(request):
@@ -190,7 +208,10 @@ def product_detail(request, pk):
             messages.success(request, 'Покупка сохранена.')
             return redirect('catalog:dashboard')
     return render(request, 'catalog/product_detail.html', page_context(product=product, purchase_form=purchase_form))
+@login_required
 def stats(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
     revenue = Sale.objects.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
     avg_sale = Sale.objects.aggregate(avg=Avg('total_amount'))['avg'] or Decimal('0.00')
     top_products = (
@@ -274,12 +295,16 @@ def register(request):
 @user_passes_test(is_staff_user)
 def model_list(request, model_key):
     spec = get_spec(model_key)
+    if not can_manage_model(request.user, model_key):
+        raise PermissionDenied
     objects = spec['model'].objects.all()
-    return render(request, 'catalog/generic_list.html', page_context(model_key=model_key, title=spec['title'], objects=objects))
+    return render(request, 'catalog/generic_list.html', page_context(model_key=model_key, title=spec['title'], objects=objects, can_manage=True))
 @login_required
 @user_passes_test(is_staff_user)
 def model_create(request, model_key):
     spec = get_spec(model_key)
+    if not can_manage_model(request.user, model_key):
+        raise PermissionDenied
     form_class = spec['form']
     if request.method == 'POST':
         form = form_class(request.POST, request.FILES)
@@ -295,6 +320,8 @@ def model_create(request, model_key):
 @user_passes_test(is_staff_user)
 def model_update(request, model_key, pk):
     spec = get_spec(model_key)
+    if not can_manage_model(request.user, model_key):
+        raise PermissionDenied
     obj = get_object_or_404(spec['model'], pk=pk)
     form_class = spec['form']
     if request.method == 'POST':
@@ -311,6 +338,8 @@ def model_update(request, model_key, pk):
 @user_passes_test(is_staff_user)
 def model_delete(request, model_key, pk):
     spec = get_spec(model_key)
+    if not can_manage_model(request.user, model_key):
+        raise PermissionDenied
     obj = get_object_or_404(spec['model'], pk=pk)
     if request.method == 'POST':
         logger.info('Удалён объект %s: %s', model_key, obj)

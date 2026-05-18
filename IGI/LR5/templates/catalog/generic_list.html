@@ -3,14 +3,16 @@
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 <h1>{{ title }}</h1>
+{% if can_manage %}
 <p><a href="{% url 'catalog:model_create' model_key %}">Добавить запись</a></p>
+{% endif %}
 <table>
     <tr>
         <th>ID</th>
         <th>Объект</th>
         <th>Создано (local/UTC)</th>
         <th>Изменено (local/UTC)</th>
-        <th>Действия</th>
+        {% if can_manage %}<th>Действия</th>{% endif %}
     </tr>
     {% for obj in objects %}
         <tr>
@@ -18,13 +20,15 @@
             <td>{{ obj }}</td>
             <td>{{ obj.created_at|localtime|date:'d/m/Y H:i' }} / {{ obj.created_at|utc|date:'d/m/Y H:i' }}</td>
             <td>{{ obj.updated_at|localtime|date:'d/m/Y H:i' }} / {{ obj.updated_at|utc|date:'d/m/Y H:i' }}</td>
+            {% if can_manage %}
             <td class="actions">
                 <a href="{% url 'catalog:model_update' model_key obj.id %}">Редактировать</a>
                 <a href="{% url 'catalog:model_delete' model_key obj.id %}">Удалить</a>
             </td>
+            {% endif %}
         </tr>
     {% empty %}
-        <tr><td colspan="5">Нет записей.</td></tr>
+        <tr><td colspan="{% if can_manage %}5{% else %}4{% endif %}">Нет записей.</td></tr>
     {% endfor %}
 </table>
 {% endblock %}

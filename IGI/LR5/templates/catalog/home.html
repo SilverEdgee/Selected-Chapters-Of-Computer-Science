@@ -3,7 +3,7 @@
 {% block title %}Главная — Фабрика игрушек{% endblock %}
 {% block content %}
 <h1>Фабрика игрушек</h1>
-<p>Главная страница с последней опубликованной новостью и краткой статистикой.</p>
+<p>Главная страница с последней опубликованной новостью и внутренней статистикой для суперадмина.</p>
 <div class="card">
     <h2>Последняя опубликованная статья</h2>
     {% if latest_article %}
@@ -16,6 +16,7 @@
         <p>Пока нет новостей.</p>
     {% endif %}
 </div>
+{% if user.is_superuser and stats %}
 <div class="card">
     <h2>Краткая статистика</h2>
     <ul>
@@ -26,6 +27,7 @@
         <li>Выручка: {{ stats.revenue }}</li>
     </ul>
 </div>
+{% endif %}
 <div class="card">
     <h2>Последний товар</h2>
     {% if latest_product %}
@@ -38,6 +40,7 @@
         <p>Пока нет товаров.</p>
     {% endif %}
 </div>
+{% if user.is_superuser %}
 <div class="card">
     <h2>График выручки по месяцам</h2>
     {% if monthly_chart %}
@@ -46,10 +49,11 @@
         <p>Недостаточно данных для графика.</p>
     {% endif %}
 </div>
+{% endif %}
 {% endblock %}
 {% block extra_scripts %}
 {{ block.super }}
-{% if monthly_chart %}
+{% if user.is_superuser and monthly_chart %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 (() => {

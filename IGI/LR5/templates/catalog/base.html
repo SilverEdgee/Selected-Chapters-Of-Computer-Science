@@ -31,7 +31,9 @@
         <a href="{% url 'catalog:reviews' %}">Отзывы</a>
         <a href="{% url 'catalog:promo_codes' %}">Промокоды</a>
         <a href="{% url 'catalog:products' %}">Товары</a>
-        <a href="{% url 'catalog:stats' %}">Статистика</a>
+        {% if user.is_superuser %}
+            <a href="{% url 'catalog:stats' %}">Статистика</a>
+        {% endif %}
         <a href="{% url 'catalog:api_demo' %}">API</a>
         <a href="{% url 'catalog:dashboard' %}">Кабинет</a>
         {% if user.is_authenticated %}
@@ -50,7 +52,9 @@
     {% if user.is_staff or user.is_superuser %}
     <p class="muted">
         Управление:
-        <a href="{% url 'catalog:model_list' 'product-types' %}">Типы</a>
+        {% if user.is_superuser %}
+            <a href="{% url 'catalog:model_list' 'product-types' %}">Типы</a>
+        {% endif %}
         <a href="{% url 'catalog:model_list' 'toy-models' %}">Модели</a>
         <a href="{% url 'catalog:model_list' 'tags' %}">Теги</a>
         <a href="{% url 'catalog:model_list' 'products' %}">Товары</a>

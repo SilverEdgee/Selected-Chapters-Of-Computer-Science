@@ -19,6 +19,7 @@ class CoreDomainTests(TestCase):
         self.product_1 = Product.objects.create(code='TOY-001', name='Медведь', product_type=self.product_type, toy_model=self.toy_model, price=Decimal('15.00'))
         self.product_1.tags.add(self.tag)
         self.product_2 = Product.objects.create(code='TOY-002', name='Кубики', product_type=self.product_type, toy_model=self.toy_model, price=Decimal('25.00'))
+        self.superuser = User.objects.create_superuser('admin', 'admin@example.com', 'pass12345')
         self.employee_user = User.objects.create_user('employee', password='pass12345', is_staff=True)
         self.client_user = User.objects.create_user('client', password='pass12345')
         self.employee = Employee.objects.create(user=self.employee_user, full_name='Анна Иванова', phone='+375 (29) 222-33-44', position='Менеджер', specialization='Продажи', birth_date=adult_birth_date(30))
@@ -116,8 +117,8 @@ class CoreDomainTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Кабинет')
         self.assertContains(response, 'Кубики')
-    def test_staff_crud_views_work(self):
-        self.client.force_login(self.employee_user)
+    def test_superuser_crud_views_work(self):
+        self.client.force_login(self.superuser)
         list_response = self.client.get(reverse('catalog:model_list', args=['product-types']))
         self.assertEqual(list_response.status_code, 200)
         create_response = self.client.post(reverse('catalog:model_create', args=['product-types']), {
@@ -135,6 +136,20 @@ class CoreDomainTests(TestCase):
         delete_response = self.client.post(reverse('catalog:model_delete', args=['product-types', created.pk]), follow=True)
         self.assertEqual(delete_response.status_code, 200)
         self.assertFalse(ProductType.objects.filter(pk=created.pk).exists())
+
+    def test_staff_cannot_manage_product_types(self):
+        self.client.force_login(self.employee_user)
+        self.assertEqual(self.client.get(reverse('catalog:model_list', args=['product-types'])).status_code, 403)
+        self.assertEqual(self.client.post(reverse('catalog:model_create', args=['product-types']), {'name': 'Тест', 'description': 'Тест'}).status_code, 403)
+
+    def test_stats_page_requires_superuser(self):
+        self.client.force_login(self.client_user)
+        self.assertEqual(self.client.get(reverse('catalog:stats')).status_code, 403)
+        self.client.force_login(self.superuser)
+        response = self.client.get(reverse('catalog:stats'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Статистика')
+        self.assertContains(response, 'Выручка')
     def test_product_search_and_sort(self):
         response = self.client.get(reverse('catalog:products'), {'q': 'Куб', 'sort': '-price'})
         self.assertContains(response, 'Кубики')
@@ -178,11 +193,23 @@ class CoreDomainTests(TestCase):
         response = self.client.get(reverse('catalog:dashboard'))
         self.assertContains(response, 'Кабинет')
         self.assertContains(response, 'Кубики')
-    def test_stats_page_contains_revenue(self):
+    def test_home_hides_stats_for_regular_users(self):
         sale = Sale.objects.create(client=self.client_profile, employee=self.employee)
         SaleItem.objects.create(sale=sale, product=self.product_2, quantity=1, unit_price=self.product_2.price)
-        response = self.client.get(reverse('catalog:stats'))
-        self.assertEqual(response.context['revenue'], Decimal('25.00'))
+        self.client.force_login(self.client_user)
+        response = self.client.get(reverse('catalog:home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Краткая статистика')
+        self.assertNotContains(response, 'График выручки по месяцам')
+
+    def test_home_shows_stats_for_superuser(self):
+        sale = Sale.objects.create(client=self.client_profile, employee=self.employee)
+        SaleItem.objects.create(sale=sale, product=self.product_2, quantity=1, unit_price=self.product_2.price)
+        self.client.force_login(self.superuser)
+        response = self.client.get(reverse('catalog:home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Краткая статистика')
+        self.assertContains(response, 'График выручки по месяцам')
     def test_product_detail_by_code_route(self):
         response = self.client.get(reverse('catalog:product_detail_by_code', args=['TOY-001']))
         self.assertEqual(response.status_code, 200)
