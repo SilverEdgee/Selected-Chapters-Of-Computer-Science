@@ -49,7 +49,7 @@
     {% if current_dt %}
         <p class="muted">Текущее время: {{ current_dt|localtime|date:'d/m/Y H:i' }} / UTC: {{ current_dt|utc|date:'d/m/Y H:i' }}</p>
     {% endif %}
-    {% if user.is_staff or user.is_superuser %}
+    {% if user.is_superuser %}
     <p class="muted">
         Управление:
         {% if user.is_superuser %}
