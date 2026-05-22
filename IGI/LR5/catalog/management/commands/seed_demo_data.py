@@ -80,7 +80,7 @@ class Command(BaseCommand):
                 'requisites': 'Реквизиты компании для демонстрации.',
             },
         )
-        for idx in range(1, 6):
+        for idx in range(1, 11):
             NewsArticle.objects.get_or_create(
                 title=f'Новость {idx}',
                 defaults={
@@ -103,6 +103,12 @@ class Command(BaseCommand):
             ('Олег Смирнов', 'Логист', '+375 (29) 444-55-66', 'oleg@example.com'),
             ('Ирина Орлова', 'Маркетолог', '+375 (29) 555-66-77', 'irina@example.com'),
             ('Павел Новиков', 'Кладовщик', '+375 (29) 666-77-88', 'pavel@example.com'),
+            ('Анна Лебедева', 'Бухгалтер', '+375 (29) 777-88-99', 'anna@example.com'),
+            ('Дмитрий Кузнецов', 'Технолог', '+375 (29) 888-99-00', 'dmitry@example.com'),
+            ('Елена Соколова', 'HR-специалист', '+375 (29) 111-22-33', 'elena@example.com'),
+            ('Сергей Морозов', 'Дизайнер', '+375 (29) 222-33-44', 'sergey@example.com'),
+            ('Наталья Волкова', 'Контролёр качества', '+375 (29) 333-55-77', 'natalia@example.com'),
+            ('Виктор Зайцев', 'Инженер', '+375 (29) 444-66-88', 'viktor@example.com'),
         ]:
             ContactPerson.objects.get_or_create(full_name=name, defaults={'role': role, 'phone': phone, 'email': email, 'description': f'{role} компании.'})
         for title, salary in [
