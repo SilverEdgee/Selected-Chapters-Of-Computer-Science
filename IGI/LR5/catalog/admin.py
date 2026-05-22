@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import (
     Client,
     CompanyInfo,
@@ -79,17 +80,31 @@ class CompanyInfoAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description')
 @admin.register(NewsArticle)
 class NewsArticleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'published_at', 'is_published', 'updated_at')
+    list_display = ('id', 'image_preview', 'title', 'published_at', 'is_published', 'updated_at')
     list_filter = ('is_published', 'published_at')
     search_fields = ('title', 'summary', 'body')
+    readonly_fields = ('image_preview',)
+
+    @admin.display(description='Изображение')
+    def image_preview(self, obj):
+        if obj.image_source:
+            return format_html('<img src="{}" style="max-height: 60px; width: auto;">', obj.image_source)
+        return '—'
 @admin.register(FAQEntry)
 class FAQEntryAdmin(admin.ModelAdmin):
     list_display = ('id', 'question', 'updated_at')
     search_fields = ('question', 'answer')
 @admin.register(ContactPerson)
 class ContactPersonAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'role', 'phone', 'email', 'updated_at')
+    list_display = ('id', 'photo_preview', 'full_name', 'role', 'phone', 'email', 'updated_at')
     search_fields = ('full_name', 'role', 'phone', 'email')
+    readonly_fields = ('photo_preview',)
+
+    @admin.display(description='Фото')
+    def photo_preview(self, obj):
+        if obj.photo_source:
+            return format_html('<img src="{}" style="max-height: 60px; width: auto;">', obj.photo_source)
+        return '—'
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'salary', 'is_active', 'updated_at')

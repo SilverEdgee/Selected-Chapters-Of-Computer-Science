@@ -1,7 +1,21 @@
+from datetime import date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
+
+
+def _shift_years(value, years):
+    try:
+        return value.replace(year=value.year - years)
+    except ValueError:  # 29 февраля в невисокосный год
+        return value.replace(year=value.year - years, day=28)
+
+
+def adult_birth_date_bounds():
+    """Границы для HTML5-валидации даты рождения на фронте: 18+ и не старше 120 лет."""
+    today = timezone.localdate()
+    return _shift_years(today, 120).isoformat(), _shift_years(today, 18).isoformat()
 from .models import (
     Client,
     CompanyInfo,
@@ -26,6 +40,12 @@ class BootstrapLikeForm(forms.ModelForm):
             css = field.widget.attrs.get('class', '')
             field.widget.attrs['class'] = (css + ' form-control').strip()
 class AdultValidationMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'birth_date' in self.fields:
+            min_date, max_date = adult_birth_date_bounds()
+            self.fields['birth_date'].widget.attrs.update({'min': min_date, 'max': max_date})
+
     def clean_birth_date(self):
         birth_date = self.cleaned_data['birth_date']
         today = timezone.localdate()
@@ -43,6 +63,11 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2', 'full_name', 'phone', 'city', 'address', 'birth_date')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        min_date, max_date = adult_birth_date_bounds()
+        self.fields['birth_date'].widget.attrs.update({'min': min_date, 'max': max_date})
+        self.fields['phone'].widget.attrs.update({'pattern': r'\+375 \(29\) \d{3}-\d{2}-\d{2}', 'placeholder': '+375 (29) XXX-XX-XX'})
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -75,7 +100,7 @@ class ProductForm(BootstrapLikeForm):
         model = Product
         fields = ['code', 'name', 'product_type', 'toy_model', 'tags', 'price', 'is_active']
         widgets = {'tags': forms.CheckboxSelectMultiple()}
-class ClientForm(BootstrapLikeForm, AdultValidationMixin):
+class ClientForm(AdultValidationMixin, BootstrapLikeForm):
     class Meta:
         model = Client
         fields = ['user', 'full_name', 'phone', 'city', 'address', 'birth_date', 'notes']
@@ -84,7 +109,7 @@ class ClientForm(BootstrapLikeForm, AdultValidationMixin):
             'notes': forms.Textarea(attrs={'rows': 3}),
             'phone': forms.TextInput(attrs={'pattern': r'\+375 \(29\) \d{3}-\d{2}-\d{2}'}),
         }
-class EmployeeForm(BootstrapLikeForm, AdultValidationMixin):
+class EmployeeForm(AdultValidationMixin, BootstrapLikeForm):
     class Meta:
         model = Employee
         fields = ['user', 'full_name', 'phone', 'position', 'specialization', 'birth_date']

@@ -70,6 +70,12 @@
         <a href="{% url 'catalog:model_list' 'reviews' %}">Отзывы</a>
         <a href="{% url 'catalog:model_list' 'promo-codes' %}">Промокоды</a>
     </p>
+    {% elif user.is_staff %}
+    <p class="muted">
+        Управление:
+        <a href="{% url 'catalog:model_list' 'news' %}">Новости</a>
+        <a href="{% url 'catalog:model_create' 'news' %}">Добавить новость</a>
+    </p>
     {% endif %}
     {% if messages %}
     <ul class="messages">

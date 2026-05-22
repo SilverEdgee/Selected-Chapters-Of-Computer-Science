@@ -2,6 +2,7 @@ import logging
 import json
 import io
 import base64
+import calendar
 from decimal import Decimal
 import matplotlib
 matplotlib.use('Agg')
@@ -66,8 +67,11 @@ def is_superuser_user(user):
 
 
 def can_manage_model(user, model_key):
-    # Only superusers can manage models now (employees are not allowed CRUD)
-    return user.is_authenticated and user.is_superuser
+    if not (user.is_authenticated and (user.is_staff or user.is_superuser)):
+        return False
+    if user.is_superuser:
+        return True
+    return model_key == 'news'
 MODEL_SPECS = {
     'product-types': {'model': ProductType, 'form': ProductTypeForm, 'title': 'Типы игрушек'},
     'toy-models': {'model': ToyModel, 'form': ToyModelForm, 'title': 'Модели игрушек'},
@@ -93,6 +97,24 @@ def page_context(**kwargs):
     ctx = {'current_dt': timezone.now()}
     ctx.update(kwargs)
     return ctx
+MONTH_NAMES_RU = [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+]
+WEEKDAY_NAMES_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+
+
+def build_month_calendar(today):
+    cal = calendar.Calendar(firstweekday=0)
+    return {
+        'weeks': cal.monthdayscalendar(today.year, today.month),
+        'weekdays': WEEKDAY_NAMES_RU,
+        'month_name': MONTH_NAMES_RU[today.month - 1],
+        'year': today.year,
+        'today': today.day,
+    }
+
+
 def home(request):
     latest_article = NewsArticle.objects.filter(is_published=True).order_by('-published_at').first()
     latest_product = Product.objects.select_related('product_type', 'toy_model').prefetch_related('tags').order_by('-created_at').first()
@@ -127,6 +149,7 @@ def home(request):
             latest_article=latest_article,
             latest_product=latest_product,
             stats=stats,
+            month_calendar=build_month_calendar(timezone.localdate()),
             monthly_chart=monthly_chart,
             monthly_chart_labels_json=monthly_chart_labels_json,
             monthly_chart_values_json=monthly_chart_values_json,
@@ -278,7 +301,6 @@ def stats(request):
     year_labels = [y.year for y in years]
     year_values = [float(row['total'] or Decimal('0.00')) for row in yearly_qs]
 
-    # Helper: render matplotlib fig to base64 data uri
     def fig_to_datauri(fig):
         buf = io.BytesIO()
         fig.savefig(buf, format='png', bbox_inches='tight')
@@ -287,7 +309,6 @@ def stats(request):
         data = base64.b64encode(buf.read()).decode('ascii')
         return f'data:image/png;base64,{data}'
 
-    # Monthly totals plot (with linear trend and 3-month forecast)
     monthly_plot_uri = None
     if month_labels:
         fig, ax = plt.subplots(figsize=(8, 3))
