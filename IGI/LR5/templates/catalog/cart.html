@@ -1,0 +1,35 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Корзина — Фабрика игрушек{% endblock %}
+{% block content %}
+<p class="eyebrow">Ваш заказ</p>
+<h1>Корзина</h1>
+{% if cart_rows %}
+<div class="table-scroll">
+    <table>
+        <caption>Добавленные товары</caption>
+        <thead><tr><th scope="col">Товар</th><th scope="col">Цена</th><th scope="col">Количество</th><th scope="col">Сумма</th><th scope="col">Действия</th></tr></thead>
+        <tbody>
+        {% for row in cart_rows %}
+            <tr>
+                <th scope="row"><a href="{% url 'catalog:product_detail' row.product.pk %}">{{ row.product.name }}</a><br><small>{{ row.product.code }}</small></th>
+                <td>{{ row.product.price }} BYN</td>
+                <td>
+                    <div class="quantity">
+                        <form method="post" action="{% url 'catalog:cart_change' row.product.pk 'decrease' %}">{% csrf_token %}<button type="submit" title="Уменьшить количество">−</button></form>
+                        <output>{{ row.quantity }}</output>
+                        <form method="post" action="{% url 'catalog:cart_change' row.product.pk 'increase' %}">{% csrf_token %}<button type="submit" title="Увеличить количество">+</button></form>
+                    </div>
+                </td>
+                <td>{{ row.line_total }} BYN</td>
+                <td><form method="post" action="{% url 'catalog:cart_change' row.product.pk 'remove' %}">{% csrf_token %}<button class="button danger" type="submit">Удалить из корзины</button></form></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot><tr><th colspan="3" scope="row">Итого</th><td colspan="2"><strong>{{ subtotal }} BYN</strong></td></tr></tfoot>
+    </table>
+</div>
+<p class="actions"><a class="button secondary" href="{% url 'catalog:products' %}">Продолжить покупки</a><a class="button" href="{% url 'catalog:payment' %}">💳 Оплатить</a></p>
+{% else %}
+<div class="card"><p>Корзина пуста.</p><a class="button" href="{% url 'catalog:products' %}">Перейти в каталог</a></div>
+{% endif %}
+{% endblock %}

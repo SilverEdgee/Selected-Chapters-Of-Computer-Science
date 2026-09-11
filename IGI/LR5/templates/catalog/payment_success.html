@@ -1,0 +1,12 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Заказ принят — Фабрика игрушек{% endblock %}
+{% block content %}
+<p class="eyebrow">Готово</p>
+<h1>Заказ оплачен</h1>
+<section class="card">
+    <p>Заказ №{{ sale.id }} принят. Итоговая сумма: <strong>{{ sale.total_amount }} BYN</strong>.</p>
+    <p>Дата оформления: <time datetime="{{ sale.sale_date|date:'c' }}">{{ sale.sale_date|date:'d/m/Y H:i' }}</time>.</p>
+    <ul>{% for item in sale.items.all %}<li>{{ item.product.name }} × {{ item.quantity }}</li>{% endfor %}</ul>
+    <p><a class="button" href="{% url 'catalog:dashboard' %}">Открыть личный кабинет</a></p>
+</section>
+{% endblock %}

@@ -1,78 +1,111 @@
 {% extends 'catalog/base.html' %}
-{% load tz %}
+{% load static tz %}
 {% block title %}Главная — Фабрика игрушек{% endblock %}
+{% block meta_description %}Фабрика «Добрая игрушка»: каталог безопасных игрушек, свежая новость и партнёры компании.{% endblock %}
 {% block content %}
-<h1>Фабрика игрушек</h1>
-<p>Главная страница с последней опубликованной новостью и внутренней статистикой для суперадмина.</p>
-{% if month_calendar %}
-<div class="card">
-    <h2>Календарь: {{ month_calendar.month_name }} {{ month_calendar.year }}</h2>
-    <table style="max-width: 340px;">
-        <thead>
-            <tr>{% for wd in month_calendar.weekdays %}<th style="text-align:center;">{{ wd }}</th>{% endfor %}</tr>
-        </thead>
-        <tbody>
-            {% for week in month_calendar.weeks %}
-            <tr>
-                {% for day in week %}
-                    {% if day == 0 %}
-                        <td></td>
-                    {% elif day == month_calendar.today %}
-                        <td style="text-align:center; background:#4a86e8; color:#fff; font-weight:bold;">{{ day }}</td>
-                    {% else %}
-                        <td style="text-align:center;">{{ day }}</td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
-<div class="card">
-    <h2>Последняя опубликованная статья</h2>
+<section class="banner-gallery">
+    <h1 id="main-title">Игрушки с добрым характером</h1>
+    <p>Создаём безопасные игрушки для творчества и развития. Доставка по Беларуси, проверенные материалы и честная гарантия.</p>
+    <p><a href="#catalog">Перейти к каталогу</a></p>
+    <h2>Рекламные баннеры</h2>
+    <figure>
+        <picture>
+            <source media="(max-width: 600px)" srcset="{% static 'catalog/images/banner-workshop-300.webp' %}" type="image/webp">
+            <img src="{% static 'catalog/images/banner-workshop-1024.webp' %}" alt="Деревянные и мягкие игрушки в светлой мастерской">
+        </picture>
+        <figcaption>Игрушки из нашей мастерской</figcaption>
+    </figure>
+    <figure>
+        <picture>
+            <source media="(max-width: 600px)" srcset="{% static 'catalog/images/banner-summer-300.webp' %}" type="image/webp">
+            <img src="{% static 'catalog/images/banner-summer-1024.webp' %}" alt="Экологичные игрушки для летних игр в парке" loading="lazy">
+        </picture>
+        <figcaption>Летняя коллекция игрушек</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 id="audio-title">Аудиоприветствие фабрики</h2>
+    <p>Короткая звуковая заставка интернет-магазина.</p>
+    <audio controls preload="none"><source src="{% static 'catalog/media/toy-factory-jingle.mp3' %}" type="audio/mpeg">Ваш браузер не поддерживает аудио.</audio>
+</section>
+
+<section id="catalog">
+    <p class="eyebrow">Каталог продукции</p>
+    <h2 id="catalog-title">Популярные игрушки</h2>
+    <div class="grid">
+        {% for product in featured_products %}
+        <article class="card product-card" itemscope itemtype="https://schema.org/Product">
+            <figure class="product-art">
+                {% if product.image_source %}
+                    <img src="{{ product.image_source }}" width="300" alt="{{ product.name }}" itemprop="image" loading="lazy">
+                {% elif forloop.counter|divisibleby:'2' %}
+                    <img src="{% static 'catalog/images/banner-summer-300.webp' %}" alt="Иллюстрация товара {{ product.name }}" itemprop="image" loading="lazy">
+                {% else %}
+                    <img src="{% static 'catalog/images/banner-workshop-300.webp' %}" alt="Иллюстрация товара {{ product.name }}" itemprop="image" loading="lazy">
+                {% endif %}
+                <figcaption class="muted">{{ product.product_type }}</figcaption>
+            </figure>
+            <h3 itemprop="name">{{ product.name }}</h3>
+            <p itemprop="description">{{ product.description|default:product.toy_model|truncatechars:115 }}</p>
+            <p class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">{{ product.price }}</span> <span itemprop="priceCurrency">BYN</span></p>
+            <div class="product-actions">
+                <a class="button secondary" href="{% url 'catalog:product_detail' product.pk %}" itemprop="url">Подробнее</a>
+                <form method="post" action="{% url 'catalog:cart_add' product.pk %}">
+                    {% csrf_token %}<input type="hidden" name="quantity" value="1"><input type="hidden" name="next" value="cart">
+                    <button type="submit" title="Добавить {{ product.name }} в корзину">🛒 В корзину</button>
+                </form>
+            </div>
+        </article>
+        {% empty %}<p>Каталог пока не заполнен.</p>{% endfor %}
+    </div>
+    <p><a class="button secondary" href="{% url 'catalog:products' %}">Все товары</a></p>
+</section>
+
+<section>
+    <p class="eyebrow">Журнал фабрики</p>
+    <h2 id="latest-title">Последняя опубликованная статья</h2>
     {% if latest_article %}
-        <p><strong>{{ latest_article.title }}</strong></p>
-        {% if latest_article.image_source %}<p><img src="{{ latest_article.image_source }}" alt="{{ latest_article.title }}" style="max-width: 320px; height: auto;"></p>{% endif %}
-        <p>{{ latest_article.summary }}</p>
-        <p>Опубликовано: {{ latest_article.published_at|localtime|date:'d/m/Y H:i' }} / UTC: {{ latest_article.published_at|utc|date:'d/m/Y H:i' }}</p>
-        <p><a href="{% url 'catalog:news_detail' latest_article.pk %}">Читать далее</a></p>
-    {% else %}
-        <p>Пока нет новостей.</p>
-    {% endif %}
-</div>
-{% if user.is_superuser and stats %}
-<div class="card">
-    <h2>Краткая статистика</h2>
-    <ul>
-        <li>Товаров: {{ stats.products }}</li>
-        <li>Клиентов: {{ stats.clients }}</li>
-        <li>Сотрудников: {{ stats.employees }}</li>
-        <li>Продаж: {{ stats.sales }}</li>
-        <li>Выручка: {{ stats.revenue }}</li>
+        <article class="card two-col" itemscope itemtype="https://schema.org/NewsArticle">
+            <div>{% if latest_article.image_source %}<picture><source media="(max-width: 600px)" srcset="{{ latest_article.image_small_source }}" type="image/webp"><img src="{{ latest_article.image_source }}" width="360" alt="{{ latest_article.title }}" itemprop="image" loading="lazy"></picture>{% endif %}</div>
+            <div>
+                <h3 itemprop="headline">{{ latest_article.title }}</h3>
+                <p itemprop="description">{{ latest_article.summary }}</p>
+                <p class="muted">Опубликовано: <time itemprop="datePublished" datetime="{{ latest_article.published_at|date:'c' }}">{{ latest_article.published_at|localtime|date:'d/m/Y H:i' }}</time></p>
+                <a class="button" href="{% url 'catalog:news_detail' latest_article.pk %}" itemprop="url">Читать далее</a>
+            </div>
+        </article>
+    {% else %}<p>Пока нет новостей.</p>{% endif %}
+</section>
+
+<section>
+    <p class="eyebrow">Работаем вместе</p>
+    <h2 id="partners-title">Компании-партнёры</h2>
+    <ul class="partner-list">
+        {% for partner in partners %}
+        <li itemscope itemtype="https://schema.org/Organization">
+            <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" itemprop="url" title="Открыть сайт {{ partner.name }}">
+                {% if partner.logo_source %}<img src="{{ partner.logo_source }}" width="80" height="80" alt="Логотип {{ partner.name }}" itemprop="logo">{% elif partner.logo_static_path %}<img src="{% static partner.logo_static_path %}" width="80" height="80" alt="Логотип {{ partner.name }}" itemprop="logo">{% endif %}
+                <span><strong itemprop="name">{{ partner.name }}</strong><br><small itemprop="description">{{ partner.description }}</small></span>
+            </a>
+        </li>
+        {% empty %}<li>Партнёры пока не добавлены.</li>{% endfor %}
     </ul>
-</div>
+</section>
+
+{% if month_calendar %}
+<section>
+    <h2 id="calendar-title">Календарь: {{ month_calendar.month_name }} {{ month_calendar.year }}</h2>
+    <div class="table-scroll"><table>
+        <caption>Текущий месяц</caption>
+        <thead><tr>{% for wd in month_calendar.weekdays %}<th scope="col">{{ wd }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for week in month_calendar.weeks %}<tr>{% for day in week %}<td>{% if day %}{% if day == month_calendar.today %}<mark>{{ day }}</mark>{% else %}{{ day }}{% endif %}{% endif %}</td>{% endfor %}</tr>{% endfor %}</tbody>
+    </table></div>
+</section>
 {% endif %}
-<div class="card">
-    <h2>Последний товар</h2>
-    {% if latest_product %}
-        <p><strong>{{ latest_product.name }}</strong> ({{ latest_product.code }})</p>
-        <p>Тип: {{ latest_product.product_type }}</p>
-        <p>Модель: {{ latest_product.toy_model }}</p>
-        <p>Цена: {{ latest_product.price }}</p>
-        <p><a href="{% url 'catalog:product_detail' latest_product.pk %}">Открыть товар</a></p>
-    {% else %}
-        <p>Пока нет товаров.</p>
-    {% endif %}
-</div>
-{% if user.is_superuser %}
-<div class="card">
-    <h2>График выручки по месяцам</h2>
-    {% if monthly_chart %}
-        <canvas id="homeRevenueChart" height="120"></canvas>
-    {% else %}
-        <p>Недостаточно данных для графика.</p>
-    {% endif %}
-</div>
+
+{% if user.is_superuser and stats %}
+<section class="card"><h2 id="stats-title">Краткая статистика</h2><ul><li>Товаров: {{ stats.products }}</li><li>Клиентов: {{ stats.clients }}</li><li>Сотрудников: {{ stats.employees }}</li><li>Продаж: {{ stats.sales }}</li><li>Выручка: {{ stats.revenue }} BYN</li></ul></section>
+<section class="card"><h2>График выручки по месяцам</h2>{% if monthly_chart %}{% for row in monthly_chart %}<p>{{ row.label }} — {{ row.value }} BYN</p>{% endfor %}{% else %}<p>Недостаточно данных для графика.</p>{% endif %}</section>
 {% endif %}
 {% endblock %}

@@ -2,9 +2,13 @@
 {% block title %}Товары{% endblock %}
 {% block content %}
 <h1>Товары</h1>
-<form method="get" class="card">
-    <input type="text" name="q" placeholder="Поиск" value="{{ query }}">
-    <select name="sort">
+<form method="get" class="card" role="search">
+    <label for="product-search">Поиск по названию, коду, типу, модели или тегу</label>
+    <input class="form-control" id="product-search" type="search" name="q" placeholder="Например, медведь" value="{{ query }}">
+    <label for="product-sort">Сортировка</label>
+    <select class="form-control" id="product-sort" name="sort">
+        <option value="code" {% if sort == 'code' %}selected{% endif %}>По номеру ↑</option>
+        <option value="-code" {% if sort == '-code' %}selected{% endif %}>По номеру ↓</option>
         <option value="name" {% if sort == 'name' %}selected{% endif %}>Имя ↑</option>
         <option value="-name" {% if sort == '-name' %}selected{% endif %}>Имя ↓</option>
         <option value="price" {% if sort == 'price' %}selected{% endif %}>Цена ↑</option>
@@ -17,26 +21,27 @@
 <table>
     <thead>
         <tr>
-            <th>Код</th>
-            <th>Название</th>
-            <th>Тип</th>
-            <th>Модель</th>
-            <th>Цена</th>
-            <th>Теги</th>
-            <th></th>
+            <th scope="col">Код</th>
+            <th scope="col">Название</th>
+            <th scope="col">Тип</th>
+            <th scope="col">Модель</th>
+            <th scope="col">Цена, BYN</th>
+            <th scope="col">Теги</th>
+            <th scope="col">Действия</th>
         </tr>
     </thead>
     <tbody>
     {% for product in products %}
         <tr>
-            <td>{{ product.code }}</td>
-            <td>{{ product.name }}</td>
+            <td><code>{{ product.code }}</code></td>
+            <th scope="row">{{ product.name }}</th>
             <td>{{ product.product_type }}</td>
             <td>{{ product.toy_model }}</td>
             <td>{{ product.price }}</td>
             <td>{% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-            <td>
-                <a href="{% url 'catalog:product_detail' product.pk %}">Открыть</a>
+            <td class="actions">
+                <a class="button secondary" href="{% url 'catalog:product_detail' product.pk %}">Открыть</a>
+                <form method="post" action="{% url 'catalog:cart_add' product.pk %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button type="submit" title="Добавить в корзину">🛒 В корзину</button></form>
             </td>
         </tr>
     {% empty %}

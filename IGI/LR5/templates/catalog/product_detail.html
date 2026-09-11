@@ -1,25 +1,30 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 {% block title %}{{ product.name }}{% endblock %}
 {% block content %}
-<h1>{{ product.name }}</h1>
-<div class="card">
-    <p><strong>Код:</strong> {{ product.code }}</p>
-    <p><strong>Тип:</strong> {{ product.product_type }}</p>
-    <p><strong>Модель:</strong> {{ product.toy_model }}</p>
-    <p><strong>Цена:</strong> {{ product.price }}</p>
-    <p><strong>Теги:</strong> {% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% empty %}нет{% endfor %}</p>
-</div>
-<div class="card">
-    <h2>Купить товар</h2>
-    {% if user.is_authenticated and user.client_profile %}
-        <form method="post">
-            {% csrf_token %}
-            {{ purchase_form.as_p }}
-            <p class="muted">Если промокод действителен, скидка будет применена автоматически.</p>
-            <button type="submit">Купить</button>
-        </form>
-    {% else %}
-        <p>Чтобы купить товар, нужно войти как зарегистрированный клиент.</p>
-    {% endif %}
-</div>
+<article itemscope itemtype="https://schema.org/Product">
+    <p class="eyebrow">{{ product.product_type }}</p>
+    <h1 itemprop="name">{{ product.name }}</h1>
+    <div class="two-col">
+        <figure class="card">
+            {% if product.image_source %}<img src="{{ product.image_source }}" width="300" alt="{{ product.name }}" itemprop="image">{% else %}<img src="{% static 'catalog/images/banner-workshop-300.webp' %}" alt="Иллюстрация товара {{ product.name }}" itemprop="image">{% endif %}
+            <figcaption>Код товара: <code itemprop="sku">{{ product.code }}</code></figcaption>
+        </figure>
+        <section class="card">
+            <h2>Характеристики</h2>
+            <p itemprop="description">{{ product.description|default:'Безопасная игрушка для творчества, развития и сюжетной игры.' }}</p>
+            <dl><dt>Тип</dt><dd>{{ product.product_type }}</dd><dt>Модель</dt><dd>{{ product.toy_model }}</dd><dt>Теги</dt><dd>{% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% empty %}нет{% endfor %}</dd></dl>
+            <p class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">{{ product.price }}</span> <span itemprop="priceCurrency">BYN</span></p>
+            <link itemprop="availability" href="https://schema.org/{% if product.is_active %}InStock{% else %}OutOfStock{% endif %}">
+            {% if product.is_active %}
+            <form method="post" action="{% url 'catalog:cart_add' product.pk %}">
+                {% csrf_token %}
+                <p><label for="quantity">Количество</label><input class="form-control" id="quantity" name="quantity" type="number" min="1" max="99" value="1" required></p>
+                <input type="hidden" name="next" value="cart">
+                <button type="submit">🛒 Добавить в корзину</button>
+            </form>
+            {% else %}<p><strong>Товар временно недоступен.</strong></p>{% endif %}
+        </section>
+    </div>
+</article>
 {% endblock %}

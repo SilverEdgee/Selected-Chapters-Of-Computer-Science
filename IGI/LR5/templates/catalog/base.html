@@ -1,90 +1,113 @@
 {% load static tz %}
 <!doctype html>
-<html lang="ru">
+<html lang="ru" itemscope itemtype="https://schema.org/WebSite">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{% block meta_description %}Каталог безопасных игрушек фабрики Добрая игрушка: товары, новости, вакансии и контакты.{% endblock %}">
+    <meta name="keywords" content="игрушки, фабрика игрушек, каталог, детские товары, Минск"> <!--deprecated-->
+    <meta name="author" content="Фабрика игрушек">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="icon" href="{% static 'catalog/images/favicon.svg' %}" type="image/svg+xml">
     <title>{% block title %}Фабрика игрушек{% endblock %}</title>
     {% block extra_head %}{% endblock %}
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
-        nav a, nav form { margin-right: 12px; display: inline-block; }
-        .messages { list-style: none; padding: 0; }
-        .messages li { padding: 8px 10px; margin-bottom: 6px; background: #eef; }
-        table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-        th, td { border: 1px solid #ccc; padding: 6px 8px; vertical-align: top; }
-        .card { border: 1px solid #ddd; padding: 12px; margin: 12px 0; }
-        .muted { color: #666; }
-        .bar { background: #d9eaff; height: 18px; margin: 4px 0 12px; }
-        .bar > span { display: block; background: #4a86e8; height: 100%; }
-        .actions a { margin-right: 8px; }
-    </style>
 </head>
-<body>
-    <nav>
-        <a href="{% url 'catalog:home' %}">Главная</a>
-        <a href="{% url 'catalog:about' %}">О компании</a>
-        <a href="{% url 'catalog:news' %}">Новости</a>
-        <a href="{% url 'catalog:glossary' %}">Словарь</a>
-        <a href="{% url 'catalog:contacts' %}">Контакты</a>
-        <a href="{% url 'catalog:vacancies' %}">Вакансии</a>
-        <a href="{% url 'catalog:reviews' %}">Отзывы</a>
-        <a href="{% url 'catalog:promo_codes' %}">Промокоды</a>
-        <a href="{% url 'catalog:products' %}">Товары</a>
-        {% if user.is_superuser %}
-            <a href="{% url 'catalog:stats' %}">Статистика</a>
+<body id="top" data-site="toy-factory">
+    <a href="#main-content">Перейти к содержимому</a>
+    <header itemscope itemtype="https://schema.org/Organization">
+        <p>
+            <a href="{% url 'catalog:home' %}" itemprop="url" title="На главную" accesskey="h">
+                <img src="{% static 'catalog/images/logo.svg' %}" width="46" height="46" alt="Логотип фабрики игрушек" itemprop="logo">
+                <strong itemprop="name">Добрая игрушка</strong>
+            </a>
+        </p>
+        <nav>
+            <a href="{% url 'catalog:products' %}">Каталог</a> |
+            <a href="{% url 'catalog:about' %}">О компании</a> |
+            <a href="{% url 'catalog:news' %}">Новости</a> |
+            <a href="{% url 'catalog:contacts' %}">Контакты</a> |
+            <a href="{% url 'catalog:cart' %}">Корзина ({{ cart_item_count }})</a>
+        </nav>
+        <p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'catalog:dashboard' %}">Кабинет</a>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}<button type="submit">Выход</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Вход</a> |
+                <a href="{% url 'catalog:register' %}">Регистрация</a>
+            {% endif %}
+        </p>
+    </header>
+
+    <aside>
+        <h2>Разделы сайта</h2>
+        <nav>
+            <ul>
+                <li><a href="{% url 'catalog:home' %}#catalog">Популярные товары</a></li>
+                <li><a href="{% url 'catalog:toy_selection' %}">Подбор игрушки</a></li>
+                <li><a href="{% url 'catalog:glossary' %}">Словарь и FAQ</a></li>
+                <li><a href="{% url 'catalog:vacancies' %}">Вакансии</a></li>
+                <li><a href="{% url 'catalog:reviews' %}">Отзывы</a></li>
+                <li><a href="{% url 'catalog:promo_codes' %}">Промокоды</a></li>
+                <li><a href="{% url 'catalog:privacy' %}">Конфиденциальность</a></li>
+                <li><a href="{% url 'catalog:api_demo' %}">Полезные API</a></li>
+                {% if user.is_superuser %}<li><a href="{% url 'catalog:stats' %}">Статистика</a></li>{% endif %}
+            </ul>
+        </nav>
+        {% if current_dt %}
+            {% get_current_timezone as TIME_ZONE %}
+            <p><small>Сейчас в {{ TIME_ZONE }}:<br><time datetime="{{ current_dt|date:'c' }}">{{ current_dt|localtime|date:'d/m/Y H:i' }}</time><br>UTC: <time datetime="{{ current_dt|utc|date:'c' }}">{{ current_dt|utc|date:'d/m/Y H:i' }}</time></small></p>
         {% endif %}
-        <a href="{% url 'catalog:api_demo' %}">API</a>
-        <a href="{% url 'catalog:dashboard' %}">Кабинет</a>
-        {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" style="display:inline; margin-left: 12px;">
-                {% csrf_token %}
-                <button type="submit">Выход</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}">Вход</a>
-            <a href="{% url 'catalog:register' %}">Регистрация</a>
+    </aside>
+
+    <main id="main-content" tabindex="-1">
+        {% if user.is_staff or user.is_superuser %}
+        <details>
+            <summary>Управление данными</summary>
+            <nav>
+                {% if user.is_superuser %}
+                    <a href="{% url 'catalog:model_list' 'product-types' %}">Типы</a> |
+                    <a href="{% url 'catalog:model_list' 'toy-models' %}">Модели</a> |
+                    <a href="{% url 'catalog:model_list' 'tags' %}">Теги</a> |
+                    <a href="{% url 'catalog:model_list' 'products' %}">Товары</a> |
+                    <a href="{% url 'catalog:model_list' 'clients' %}">Клиенты</a> |
+                    <a href="{% url 'catalog:model_list' 'employees' %}">Сотрудники</a> |
+                    <a href="{% url 'catalog:model_list' 'sales' %}">Продажи</a> |
+                    <a href="{% url 'catalog:model_list' 'sale-items' %}">Позиции продаж</a> |
+                    <a href="{% url 'catalog:model_list' 'company-info' %}">Компания</a> |
+                    <a href="{% url 'catalog:model_list' 'company-milestones' %}">История</a> |
+                    <a href="{% url 'catalog:model_list' 'partners' %}">Партнёры</a> |
+                    <a href="{% url 'catalog:model_list' 'faq' %}">FAQ</a> |
+                    <a href="{% url 'catalog:model_list' 'contacts' %}">Контакты</a> |
+                    <a href="{% url 'catalog:model_list' 'vacancies' %}">Вакансии</a> |
+                    <a href="{% url 'catalog:model_list' 'reviews' %}">Отзывы</a> |
+                    <a href="{% url 'catalog:model_list' 'promo-codes' %}">Промокоды</a> |
+                {% endif %}
+                <a href="{% url 'catalog:model_list' 'news' %}">Новости</a>
+            </nav>
+        </details>
         {% endif %}
-    </nav>
-    {% if current_dt %}
-        <p class="muted">Текущее время: {{ current_dt|localtime|date:'d/m/Y H:i' }} / UTC: {{ current_dt|utc|date:'d/m/Y H:i' }}</p>
-    {% endif %}
-    {% if user.is_superuser %}
-    <p class="muted">
-        Управление:
-        {% if user.is_superuser %}
-            <a href="{% url 'catalog:model_list' 'product-types' %}">Типы</a>
+        {% if messages %}
+            <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
         {% endif %}
-        <a href="{% url 'catalog:model_list' 'toy-models' %}">Модели</a>
-        <a href="{% url 'catalog:model_list' 'tags' %}">Теги</a>
-        <a href="{% url 'catalog:model_list' 'products' %}">Товары</a>
-        <a href="{% url 'catalog:model_list' 'clients' %}">Клиенты</a>
-        <a href="{% url 'catalog:model_list' 'employees' %}">Сотрудники</a>
-        <a href="{% url 'catalog:model_list' 'sales' %}">Продажи</a>
-        <a href="{% url 'catalog:model_list' 'sale-items' %}">Позиции продаж</a>
-        <a href="{% url 'catalog:model_list' 'company-info' %}">О компании</a>
-        <a href="{% url 'catalog:model_list' 'news' %}">Новости</a>
-        <a href="{% url 'catalog:model_list' 'faq' %}">FAQ</a>
-        <a href="{% url 'catalog:model_list' 'contacts' %}">Контакты</a>
-        <a href="{% url 'catalog:model_list' 'vacancies' %}">Вакансии</a>
-        <a href="{% url 'catalog:model_list' 'reviews' %}">Отзывы</a>
-        <a href="{% url 'catalog:model_list' 'promo-codes' %}">Промокоды</a>
-    </p>
-    {% elif user.is_staff %}
-    <p class="muted">
-        Управление:
-        <a href="{% url 'catalog:model_list' 'news' %}">Новости</a>
-        <a href="{% url 'catalog:model_create' 'news' %}">Добавить новость</a>
-    </p>
-    {% endif %}
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% block content %}{% endblock %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <hr>
+        <address itemscope itemtype="https://schema.org/PostalAddress">
+            <strong>Фабрика «Добрая игрушка»</strong><br>
+            <span itemprop="streetAddress">проспект Игрушечный, 22</span>, <span itemprop="addressLocality">Минск</span><br>
+            <a href="tel:+375291234567" itemprop="telephone">+375 (29) 123-45-67</a> ·
+            <a href="mailto:hello@toyfactory.example" itemprop="email">hello@toyfactory.example</a>
+        </address>
+        <p><a href="{% url 'catalog:privacy' %}">Политика конфиденциальности</a> |
+        <a href="{% static 'catalog/docs/toy-care-guide.txt' %}" download="Памятка-по-уходу.txt">Скачать памятку</a> |
+        <a href="#top">Наверх ↑</a></p>
+    </footer>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

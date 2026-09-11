@@ -3,13 +3,18 @@
 {% block content %}
 <h1>Новости</h1>
 {% for article in articles %}
-    <div class="card">
-        <p><strong>{{ article.title }}</strong></p>
-        {% if article.image_source %}<p><img src="{{ article.image_source }}" alt="{{ article.title }}" style="max-width: 220px; height: auto;"></p>{% endif %}
-        <p>{{ article.summary }}</p>
-        <p>Дата: {{ article.published_at|date:'d/m/Y H:i' }}</p>
-        <p><a href="{% url 'catalog:news_detail' article.pk %}">Читать далее</a></p>
-    </div>
+    <article class="card two-col" itemscope itemtype="https://schema.org/NewsArticle">
+        {% if article.image_source %}
+        <figure>
+            <picture>
+                <source media="(max-width: 600px)" srcset="{{ article.image_small_source }}" type="image/webp">
+                <img src="{{ article.image_source }}" width="300" alt="Иллюстрация к новости «{{ article.title }}»" itemprop="image" loading="lazy">
+            </picture>
+            <figcaption>Иллюстрация к новости «{{ article.title }}»</figcaption>
+        </figure>
+        {% endif %}
+        <div><h2 itemprop="headline">{{ article.title }}</h2><p itemprop="description">{{ article.summary }}</p><p class="muted">Дата: <time itemprop="datePublished" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'d/m/Y H:i' }}</time></p><p><a class="button" href="{% url 'catalog:news_detail' article.pk %}" itemprop="url">Читать далее</a></p></div>
+    </article>
 {% empty %}
     <p>Новостей пока нет.</p>
 {% endfor %}

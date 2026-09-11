@@ -1,0 +1,33 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Подбор игрушки{% endblock %}
+{% block content %}
+<h1>Подбор игрушки</h1>
+<p>Можно заполнить один или несколько критериев. Например: ключевое слово «игрушка», категория «Конструкторы» и максимальная цена 30 BYN.</p>
+
+<form method="get">
+    <fieldset>
+        <legend>Критерии подбора</legend>
+        <p><label for="selection-search">Ключевое слово</label><br><input id="selection-search" name="q" type="search" minlength="2" maxlength="40" value="{{ query }}" placeholder="Например, игрушка"></p>
+        <p><label for="selection-category">Категория</label><br><select id="selection-category" name="category"><option value="">Любая категория</option>{% for category in categories %}<option value="{{ category.pk }}" {% if selected_category == category.pk|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></p>
+        <p><label for="selection-budget">Максимальная цена, BYN</label><br><input id="selection-budget" name="budget" type="number" min="1" max="10000" step="0.01" value="{{ budget }}" placeholder="Например, 50"></p>
+        <button type="submit" name="submit" value="1">Подобрать</button>
+        <button type="reset">Очистить поля</button>
+    </fieldset>
+</form>
+
+{% if selection_error %}<p role="alert"><strong>{{ selection_error }}</strong></p>{% endif %}
+{% if submitted and not selection_error %}
+<section>
+    <h2 id="selection-results">Результаты</h2>
+    {% for product in products %}
+    <article itemscope itemtype="https://schema.org/Product">
+        <h3 itemprop="name"><a href="{% url 'catalog:product_detail' product.pk %}">{{ product.name }}</a></h3>
+        <p>{{ product.product_type }} · {{ product.toy_model }}</p>
+        <p itemprop="description">{{ product.description }}</p>
+        <p itemprop="offers" itemscope itemtype="https://schema.org/Offer"><strong><span itemprop="price">{{ product.price }}</span> <span itemprop="priceCurrency">BYN</span></strong></p>
+        <form method="post" action="{% url 'catalog:cart_add' product.pk %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button type="submit">Добавить в корзину</button></form>
+    </article>
+    {% empty %}<p>По выбранным критериям игрушки не найдены.</p>{% endfor %}
+</section>
+{% endif %}
+{% endblock %}

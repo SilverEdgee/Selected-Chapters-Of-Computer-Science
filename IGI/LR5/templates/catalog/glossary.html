@@ -3,11 +3,11 @@
 {% block content %}
 <h1>Словарь терминов и понятий</h1>
 {% for entry in entries %}
-    <div class="card">
-        <p><strong>{{ entry.question }}</strong></p>
+    <details>
+        <summary>{{ entry.question }}</summary>
         <p>{{ entry.answer }}</p>
-        <p>Добавлено: {{ entry.created_at|date:'d/m/Y' }}</p>
-    </div>
+        <p class="muted"><small>Добавлено: <time datetime="{{ entry.created_at|date:'c' }}">{{ entry.created_at|date:'d/m/Y' }}</time></small></p>
+    </details>
 {% empty %}
     <p>Пока нет записей.</p>
 {% endfor %}

@@ -1,11 +1,21 @@
 {% extends 'catalog/base.html' %}
 {% block title %}{{ article.title }}{% endblock %}
 {% block content %}
-<h1>{{ article.title }}</h1>
-<div class="card">
-    {% if article.image_source %}<p><img src="{{ article.image_source }}" alt="{{ article.title }}" style="max-width: 500px; height: auto;"></p>{% endif %}
-    <p>{{ article.summary }}</p>
-    <p>{{ article.body }}</p>
-    <p>Опубликовано: {{ article.published_at|date:'d/m/Y H:i' }}</p>
-</div>
+<article itemscope itemtype="https://schema.org/NewsArticle">
+    <p class="eyebrow">Новости фабрики</p>
+    <h1 itemprop="headline">{{ article.title }}</h1>
+    <p class="lead" itemprop="description">{{ article.summary }}</p>
+    {% if article.image_source %}
+    <figure>
+        <picture>
+            <source media="(max-width: 600px)" srcset="{{ article.image_small_source }}" type="image/webp">
+            <img src="{{ article.image_source }}" width="720" alt="Иллюстрация к новости «{{ article.title }}»" itemprop="image">
+        </picture>
+        <figcaption>Иллюстрация к новости «{{ article.title }}»</figcaption>
+    </figure>
+    {% endif %}
+    <div itemprop="articleBody">{{ article.body|linebreaks }}</div>
+    <p class="muted">Опубликовано: <time itemprop="datePublished" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'d/m/Y H:i' }}</time></p>
+    <p><a href="{% url 'catalog:news' %}">← Ко всем новостям</a></p>
+</article>
 {% endblock %}

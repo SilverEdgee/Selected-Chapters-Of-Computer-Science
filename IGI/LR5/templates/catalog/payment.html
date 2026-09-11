@@ -1,0 +1,26 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Оплата заказа — Фабрика игрушек{% endblock %}
+{% block content %}
+<p class="eyebrow">Безопасное оформление</p>
+<h1>Оплата товаров</h1>
+<div class="two-col">
+    <section class="card">
+        <h2 id="order-title">Ваш заказ</h2>
+        <ul>{% for row in cart_rows %}<li>{{ row.product.name }} × {{ row.quantity }} — {{ row.line_total }} BYN</li>{% endfor %}</ul>
+        <p><strong>Без скидки: {{ subtotal }} BYN</strong></p>
+        <p class="muted"><small>Итоговая сумма с промокодом будет сохранена в заказе после проверки формы.</small></p>
+    </section>
+    <section class="card">
+        <h2 id="payment-form-title">Доставка и оплата</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <fieldset><legend>Получатель</legend>{{ form.full_name.as_field_group }}{{ form.email.as_field_group }}{{ form.phone.as_field_group }}{{ form.address.as_field_group }}</fieldset>
+            <fieldset><legend>Доставка</legend>{{ form.delivery_date.as_field_group }}{{ form.delivery_time.as_field_group }}{{ form.gift_wrap.as_field_group }}{{ form.comment.as_field_group }}</fieldset>
+            <fieldset><legend>Способ оплаты</legend>{{ form.payment_method.as_field_group }}<div>{{ form.card_number.as_field_group }}{{ form.expiry.as_field_group }}{{ form.cvv.as_field_group }}</div></fieldset>
+            <fieldset><legend>Скидка и согласие</legend>{{ form.promo_code.as_field_group }}{{ form.agree.as_field_group }}</fieldset>
+            <button type="submit">Подтвердить оплату</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

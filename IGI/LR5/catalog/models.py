@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
+from django.templatetags.static import static
 from django.utils import timezone
 PHONE_VALIDATOR = RegexValidator(
     regex=r'^\+375 \(29\) \d{3}-\d{2}-\d{2}$',
@@ -39,6 +40,9 @@ class Product(TimeStampedModel):
     product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name='products')
     toy_model = models.ForeignKey(ToyModel, on_delete=models.PROTECT, related_name='products')
     tags = models.ManyToManyField(Tag, blank=True, related_name='products')
+    description = models.TextField(blank=True)
+    image = models.FileField(upload_to='products/', blank=True, null=True)
+    image_url = models.URLField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
     is_active = models.BooleanField(default=True)
     class Meta:
@@ -49,6 +53,12 @@ class Product(TimeStampedModel):
             raise ValidationError({'price': 'Цена должна быть положительной.'})
     def __str__(self):
         return f'{self.name} ({self.code})'
+
+    @property
+    def image_source(self):
+        if self.image:
+            return self.image.url
+        return self.image_url
 class Client(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='client_profile')
     full_name = models.CharField(max_length=200)
@@ -149,16 +159,79 @@ class CompanyInfo(TimeStampedModel):
     description = models.TextField()
     mission = models.TextField(blank=True)
     requisites = models.TextField(blank=True)
+    logo = models.FileField(upload_to='company/', blank=True, null=True)
+    logo_url = models.URLField(blank=True)
+    video_url = models.URLField(blank=True)
+    certificate_text = models.TextField(blank=True)
+    certificate_image = models.FileField(upload_to='company/certificates/', blank=True, null=True)
+    certificate_image_static_path = models.CharField(max_length=255, blank=True)
     class Meta:
         ordering = ['title']
     def __str__(self):
         return self.title
+
+    @property
+    def logo_source(self):
+        if self.logo:
+            return self.logo.url
+        return self.logo_url
+
+    @property
+    def certificate_image_source(self):
+        if self.certificate_image:
+            return self.certificate_image.url
+        if self.certificate_image_static_path:
+            return static(self.certificate_image_static_path)
+        return ''
+
+    @property
+    def certificate_image_small_source(self):
+        if self.certificate_image_static_path:
+            return static(self.certificate_image_static_path.replace('-720.webp', '-420.webp'))
+        return self.certificate_image_source
+
+
+class CompanyMilestone(TimeStampedModel):
+    company = models.ForeignKey(CompanyInfo, on_delete=models.CASCADE, related_name='milestones')
+    year = models.PositiveSmallIntegerField()
+    title = models.CharField(max_length=160)
+    description = models.TextField()
+
+    class Meta:
+        ordering = ['year']
+        unique_together = [('company', 'year')]
+
+    def __str__(self):
+        return f'{self.year} — {self.title}'
+
+
+class Partner(TimeStampedModel):
+    name = models.CharField(max_length=160, unique=True)
+    website = models.URLField()
+    description = models.CharField(max_length=255, blank=True)
+    logo = models.FileField(upload_to='partners/', blank=True, null=True)
+    logo_url = models.URLField(blank=True)
+    logo_static_path = models.CharField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def logo_source(self):
+        if self.logo:
+            return self.logo.url
+        return self.logo_url
 class NewsArticle(TimeStampedModel):
     title = models.CharField(max_length=200)
     summary = models.CharField(max_length=255)
     body = models.TextField()
     image = models.FileField(upload_to='news/', blank=True, null=True)
     image_url = models.URLField(blank=True)
+    image_static_path = models.CharField(max_length=255, blank=True)
     published_at = models.DateTimeField(default=timezone.now)
     is_published = models.BooleanField(default=True)
     class Meta:
@@ -169,7 +242,17 @@ class NewsArticle(TimeStampedModel):
     def image_source(self):
         if self.image:
             return self.image.url
-        return self.image_url
+        if self.image_url:
+            return self.image_url
+        if self.image_static_path:
+            return static(self.image_static_path)
+        return ''
+
+    @property
+    def image_small_source(self):
+        if self.image_static_path:
+            return static(self.image_static_path.replace('-720.webp', '-360.webp'))
+        return self.image_source
 class FAQEntry(TimeStampedModel):
     question = models.CharField(max_length=255)
     answer = models.TextField()

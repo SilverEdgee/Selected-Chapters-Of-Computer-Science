@@ -1,16 +1,25 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 {% block title %}Контакты{% endblock %}
 {% block content %}
 <h1>Контакты</h1>
+<p class="lead">Свяжитесь с нужным специалистом напрямую или приезжайте в наш демонстрационный зал.</p>
+<figure><picture><source media="(max-width: 600px)" srcset="{% static 'catalog/images/contact-team-360.webp' %}" type="image/webp"><img src="{% static 'catalog/images/contact-team-800.webp' %}" alt="Команда фабрики игрушек в мастерской"></picture><figcaption>Команда производства, дизайна, контроля качества и клиентского сервиса.</figcaption></figure>
+<div class="grid">
 {% for person in contacts %}
-    <div class="card">
-        <p><strong>{{ person.full_name }}</strong> — {{ person.role }}</p>
-        {% if person.photo_source %}<p><img src="{{ person.photo_source }}" alt="{{ person.full_name }}" style="max-width: 180px; height: auto;"></p>{% endif %}
-        <p>Телефон: {{ person.phone }}</p>
-        <p>Email: {{ person.email }}</p>
-        <p>{{ person.description }}</p>
-    </div>
+    <article class="card" itemscope itemtype="https://schema.org/Person">
+        {% if person.photo_source %}<figure><img src="{{ person.photo_source }}" width="180" alt="{{ person.full_name }}" itemprop="image" loading="lazy"><figcaption>{{ person.role }}</figcaption></figure>{% endif %}
+        <h2 itemprop="name">{{ person.full_name }}</h2>
+        <p itemprop="jobTitle">{{ person.role }}</p>
+        <address><a href="tel:{{ person.phone }}" itemprop="telephone">{{ person.phone }}</a><br><a href="mailto:{{ person.email }}" itemprop="email">{{ person.email }}</a></address>
+        <p itemprop="description">{{ person.description }}</p>
+    </article>
 {% empty %}
     <p>Контакты пока не заполнены.</p>
 {% endfor %}
+</div>
+<section class="card">
+    <h2>Как нас найти</h2>
+    <div><iframe title="Карта расположения фабрики в Минске" width="360" height="260" src="https://www.openstreetmap.org/export/embed.html?bbox=27.52%2C53.88%2C27.62%2C53.93&amp;layer=mapnik" loading="lazy"></iframe></div>
+</section>
 {% endblock %}

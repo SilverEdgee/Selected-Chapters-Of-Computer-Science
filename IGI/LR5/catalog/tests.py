@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from .forms import RegistrationForm
 from .services import fetch_external_api_results, fetch_currency_rates, fetch_minsk_weather
-from .models import Client as ToyClient, ContactPerson, Employee, NewsArticle, Product, ProductType, PromoCode, Review, Sale, SaleItem, Tag, ToyModel
+from .models import Client as ToyClient, CompanyInfo, CompanyMilestone, ContactPerson, Employee, NewsArticle, Partner, Product, ProductType, PromoCode, Review, Sale, SaleItem, Tag, ToyModel
 from unittest.mock import Mock, patch
 def adult_birth_date(years=25):
     return timezone.localdate() - timedelta(days=365 * years)
@@ -55,9 +55,19 @@ class CoreDomainTests(TestCase):
         detail = self.client.get(reverse('catalog:news_detail', args=[self.article.pk]))
         self.assertContains(detail, 'Полный текст')
     def test_public_pages_work(self):
-        for name in ['catalog:about', 'catalog:glossary', 'catalog:contacts', 'catalog:privacy', 'catalog:vacancies', 'catalog:reviews', 'catalog:promo_codes']:
+        for name in ['catalog:about', 'catalog:toy_selection', 'catalog:glossary', 'catalog:contacts', 'catalog:privacy', 'catalog:vacancies', 'catalog:reviews', 'catalog:promo_codes']:
             response = self.client.get(reverse(name))
             self.assertEqual(response.status_code, 200)
+
+    def test_toy_selection_filters_by_category_and_budget(self):
+        response = self.client.get(reverse('catalog:toy_selection'), {
+            'submit': '1',
+            'category': self.product_type.pk,
+            'budget': '20',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Медведь')
+        self.assertNotContains(response, 'Кубики')
     def test_reviews_can_be_added_by_logged_in_user(self):
         self.client.force_login(self.client_user)
         response = self.client.post(reverse('catalog:reviews'), {'rating': 5, 'text': 'Отлично!'}, follow=True)
@@ -276,6 +286,85 @@ class CoreDomainTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Фабрика игрушек')
 
+    def test_home_contains_catalog_metadata_and_partners(self):
+        Partner.objects.create(
+            name='Тестовый партнёр',
+            website='https://example.com/',
+            description='Партнёр для теста',
+            logo_static_path='catalog/images/partner-forest.svg',
+        )
+        response = self.client.get(reverse('catalog:home'))
+        self.assertContains(response, 'Популярные игрушки')
+        self.assertContains(response, 'Тестовый партнёр')
+        self.assertContains(response, 'https://schema.org/Product')
+        self.assertContains(response, 'meta name="description"', html=False)
+        self.assertContains(response, 'banner-workshop-360.webp')
+        self.assertContains(response, 'banner-workshop-1024.webp')
+        self.assertContains(response, '<audio', html=False)
+
+    def test_about_page_has_company_history_media_and_semantic_examples(self):
+        company = CompanyInfo.objects.create(
+            title='Добрая игрушка',
+            description='Производство игрушек',
+            mission='Безопасная игра',
+            requisites='УНП 123456789',
+            certificate_text='Сертификат 001',
+        )
+        CompanyMilestone.objects.create(company=company, year=2020, title='Старт', description='Открытие фабрики')
+        response = self.client.get(reverse('catalog:about'))
+        self.assertContains(response, 'История по годам')
+        self.assertContains(response, 'Открытие фабрики')
+        self.assertContains(response, '<video', html=False)
+        self.assertNotContains(response, '<audio', html=False)
+        self.assertNotContains(response, 'python manage.py', html=False)
+        self.assertContains(response, 'headers="stage incoming material wood"', html=False)
+        self.assertContains(response, '<pre', html=False)
+
+    def test_session_cart_add_change_and_remove(self):
+        add = self.client.post(reverse('catalog:cart_add', args=[self.product_1.pk]), {'quantity': 2})
+        self.assertEqual(add.status_code, 302)
+        cart = self.client.get(reverse('catalog:cart'))
+        self.assertContains(cart, 'Медведь')
+        self.assertContains(cart, '30,00 BYN')
+        self.client.post(reverse('catalog:cart_change', args=[self.product_1.pk, 'increase']))
+        self.assertEqual(self.client.session['cart'][str(self.product_1.pk)], 3)
+        self.client.post(reverse('catalog:cart_change', args=[self.product_1.pk, 'decrease']))
+        self.assertEqual(self.client.session['cart'][str(self.product_1.pk)], 2)
+        self.client.post(reverse('catalog:cart_change', args=[self.product_1.pk, 'remove']))
+        self.assertNotIn(str(self.product_1.pk), self.client.session['cart'])
+
+    def test_payment_validates_card_creates_sale_and_clears_cart(self):
+        self.client.force_login(self.client_user)
+        self.client.post(reverse('catalog:cart_add', args=[self.product_1.pk]), {'quantity': 2})
+        self.client.post(reverse('catalog:cart_add', args=[self.product_2.pk]), {'quantity': 1})
+        invalid = self.client.post(reverse('catalog:payment'), {
+            'full_name': 'Иван Петров', 'email': 'client@example.com', 'phone': '+375 (29) 111-22-33',
+            'address': 'ул. Примерная, 1', 'delivery_date': timezone.localdate() + timedelta(days=1),
+            'delivery_time': 'day', 'payment_method': 'card', 'card_number': '123', 'expiry': '01/30',
+            'cvv': '123', 'agree': 'on',
+        })
+        self.assertEqual(invalid.status_code, 200)
+        self.assertContains(invalid, 'Введите 16 цифр номера карты')
+        self.assertEqual(Sale.objects.count(), 0)
+        valid = self.client.post(reverse('catalog:payment'), {
+            'full_name': 'Иван Петров', 'email': 'client@example.com', 'phone': '+375 (29) 111-22-33',
+            'address': 'ул. Примерная, 1', 'delivery_date': timezone.localdate() + timedelta(days=1),
+            'delivery_time': 'day', 'payment_method': 'card', 'card_number': '1111 2222 3333 4444',
+            'expiry': '01/30', 'cvv': '123', 'gift_wrap': 'on', 'agree': 'on',
+        }, follow=True)
+        self.assertEqual(valid.status_code, 200)
+        sale = Sale.objects.get()
+        self.assertEqual(sale.items.count(), 2)
+        self.assertEqual(sale.total_amount, Decimal('55.00'))
+        self.assertContains(valid, 'Заказ оплачен')
+        self.assertEqual(self.client.session['cart'], {})
+
+    def test_payment_requires_authenticated_client(self):
+        self.client.post(reverse('catalog:cart_add', args=[self.product_1.pk]), {'quantity': 1})
+        response = self.client.get(reverse('catalog:payment'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response.url)
+
     # --- API tests ---
     def test_api_products_list_and_detail(self):
         response = self.client.get(reverse('catalog:api_products_list'))
@@ -323,4 +412,3 @@ class CoreDomainTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertIn('sales', data)
-

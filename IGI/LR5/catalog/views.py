@@ -3,6 +3,7 @@ import json
 import io
 import base64
 import calendar
+from datetime import timedelta
 from decimal import Decimal
 import matplotlib
 matplotlib.use('Agg')
@@ -22,11 +23,14 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from .forms import (
     ClientForm,
+    CheckoutForm,
+    CompanyMilestoneForm,
     CompanyInfoForm,
     ContactPersonForm,
     EmployeeForm,
     FAQEntryForm,
     NewsArticleForm,
+    PartnerForm,
     ProductForm,
     ProductTypeForm,
     PromoCodeForm,
@@ -42,11 +46,13 @@ from .forms import (
 from .services import fetch_currency_rates, fetch_minsk_weather
 from .models import (
     Client,
+    CompanyMilestone,
     CompanyInfo,
     ContactPerson,
     Employee,
     FAQEntry,
     NewsArticle,
+    Partner,
     Product,
     ProductType,
     PromoCode,
@@ -82,6 +88,8 @@ MODEL_SPECS = {
     'sales': {'model': Sale, 'form': SaleForm, 'title': 'Продажи'},
     'sale-items': {'model': SaleItem, 'form': SaleItemForm, 'title': 'Позиции продаж'},
     'company-info': {'model': CompanyInfo, 'form': CompanyInfoForm, 'title': 'О компании'},
+    'company-milestones': {'model': CompanyMilestone, 'form': CompanyMilestoneForm, 'title': 'История компании'},
+    'partners': {'model': Partner, 'form': PartnerForm, 'title': 'Компании-партнёры'},
     'news': {'model': NewsArticle, 'form': NewsArticleForm, 'title': 'Новости'},
     'faq': {'model': FAQEntry, 'form': FAQEntryForm, 'title': 'Словарь терминов и понятий'},
     'contacts': {'model': ContactPerson, 'form': ContactPersonForm, 'title': 'Контакты'},
@@ -118,6 +126,13 @@ def build_month_calendar(today):
 def home(request):
     latest_article = NewsArticle.objects.filter(is_published=True).order_by('-published_at').first()
     latest_product = Product.objects.select_related('product_type', 'toy_model').prefetch_related('tags').order_by('-created_at').first()
+    featured_products = (
+        Product.objects.filter(is_active=True)
+        .select_related('product_type', 'toy_model')
+        .prefetch_related('tags')
+        .order_by('code')[:6]
+    )
+    partners = Partner.objects.filter(is_active=True)
     stats = None
     monthly_chart = []
     monthly_chart_labels_json = '[]'
@@ -148,6 +163,8 @@ def home(request):
         page_context(
             latest_article=latest_article,
             latest_product=latest_product,
+            featured_products=featured_products,
+            partners=partners,
             stats=stats,
             month_calendar=build_month_calendar(timezone.localdate()),
             monthly_chart=monthly_chart,
@@ -156,7 +173,58 @@ def home(request):
         ),
     )
 def about(request):
-    return render(request, 'catalog/about.html', page_context(company=CompanyInfo.objects.first()))
+    company = CompanyInfo.objects.first()
+    milestones = company.milestones.all() if company else CompanyMilestone.objects.none()
+    return render(request, 'catalog/about.html', page_context(company=company, milestones=milestones))
+
+
+def toy_selection(request):
+    products = Product.objects.filter(is_active=True).select_related('product_type', 'toy_model').prefetch_related('tags')
+    categories = ProductType.objects.all()
+    query = request.GET.get('q', '').strip()
+    category = request.GET.get('category', '').strip()
+    budget = request.GET.get('budget', '').strip()
+    submitted = request.GET.get('submit') == '1'
+    error = ''
+
+    if submitted:
+        if query:
+            products = products.filter(
+                Q(name__icontains=query)
+                | Q(description__icontains=query)
+                | Q(code__icontains=query)
+                | Q(product_type__name__icontains=query)
+                | Q(toy_model__name__icontains=query)
+                | Q(tags__name__icontains=query)
+            ).distinct()
+        if category.isdigit():
+            products = products.filter(product_type_id=int(category))
+        if budget:
+            try:
+                max_budget = Decimal(budget.replace(',', '.'))
+                if max_budget <= 0:
+                    raise ValueError
+                products = products.filter(price__lte=max_budget)
+            except (ValueError, ArithmeticError):
+                error = 'Укажите положительный бюджет, например 50.'
+                products = products.none()
+        products = products.order_by('code')
+    else:
+        products = Product.objects.none()
+
+    return render(
+        request,
+        'catalog/toy_selection.html',
+        page_context(
+            products=products,
+            categories=categories,
+            query=query,
+            selected_category=category,
+            budget=budget,
+            submitted=submitted,
+            selection_error=error,
+        ),
+    )
 def news_list(request):
     articles = NewsArticle.objects.filter(is_published=True)
     paginator = Paginator(articles, 5)
@@ -197,7 +265,7 @@ def promo_codes(request):
 def product_list(request):
     queryset = Product.objects.select_related('product_type', 'toy_model').prefetch_related('tags')
     query = request.GET.get('q', '').strip()
-    sort = request.GET.get('sort', 'name')
+    sort = request.GET.get('sort', 'code')
     if query:
         queryset = queryset.filter(
             Q(name__icontains=query)
@@ -206,9 +274,9 @@ def product_list(request):
             | Q(toy_model__name__icontains=query)
             | Q(tags__name__icontains=query)
         ).distinct()
-    allowed_sort = {'name', '-name', 'price', '-price', 'created_at', '-created_at'}
+    allowed_sort = {'code', '-code', 'name', '-name', 'price', '-price', 'created_at', '-created_at'}
     if sort not in allowed_sort:
-        sort = 'name'
+        sort = 'code'
     queryset = queryset.order_by(sort)
     paginator = Paginator(queryset, 5)
     page_obj = paginator.get_page(request.GET.get('page'))
@@ -236,6 +304,153 @@ def product_detail(request, pk):
             messages.success(request, 'Покупка сохранена.')
             return redirect('catalog:dashboard')
     return render(request, 'catalog/product_detail.html', page_context(product=product, purchase_form=purchase_form))
+
+
+CART_SESSION_KEY = 'cart'
+
+
+def _get_cart(request):
+    cart = request.session.get(CART_SESSION_KEY)
+    if not isinstance(cart, dict):
+        cart = {}
+    return cart
+
+
+def _cart_rows(request):
+    cart = _get_cart(request)
+    product_ids = []
+    for product_id in cart:
+        try:
+            product_ids.append(int(product_id))
+        except (TypeError, ValueError):
+            continue
+    products = Product.objects.filter(pk__in=product_ids, is_active=True).select_related('product_type')
+    product_map = {product.pk: product for product in products}
+    rows = []
+    subtotal = Decimal('0.00')
+    clean_cart = {}
+    for raw_id, raw_quantity in cart.items():
+        try:
+            product_id = int(raw_id)
+            quantity = max(1, min(99, int(raw_quantity)))
+        except (TypeError, ValueError):
+            continue
+        product = product_map.get(product_id)
+        if product is None:
+            continue
+        line_total = product.price * quantity
+        subtotal += line_total
+        clean_cart[str(product_id)] = quantity
+        rows.append({'product': product, 'quantity': quantity, 'line_total': line_total})
+    if clean_cart != cart:
+        request.session[CART_SESSION_KEY] = clean_cart
+        request.session.modified = True
+    return rows, subtotal
+
+
+@require_http_methods(['POST'])
+def cart_add(request, pk):
+    product = get_object_or_404(Product, pk=pk, is_active=True)
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+    except (TypeError, ValueError):
+        quantity = 1
+    quantity = max(1, min(99, quantity))
+    cart = _get_cart(request)
+    key = str(product.pk)
+    cart[key] = min(99, int(cart.get(key, 0)) + quantity)
+    request.session[CART_SESSION_KEY] = cart
+    request.session.modified = True
+    logger.info('Товар добавлен в корзину product=%s qty=%s', product.pk, quantity)
+    messages.success(request, f'«{product.name}» добавлен в корзину.')
+    next_url = request.POST.get('next')
+    if next_url == 'cart':
+        return redirect('catalog:cart')
+    return redirect('catalog:product_detail', pk=product.pk)
+
+
+@require_http_methods(['POST'])
+def cart_change(request, pk, action):
+    cart = _get_cart(request)
+    key = str(pk)
+    if key in cart:
+        quantity = max(1, int(cart[key]))
+        if action == 'increase':
+            cart[key] = min(99, quantity + 1)
+        elif action == 'decrease':
+            if quantity <= 1:
+                cart.pop(key, None)
+            else:
+                cart[key] = quantity - 1
+        elif action == 'remove':
+            cart.pop(key, None)
+        request.session[CART_SESSION_KEY] = cart
+        request.session.modified = True
+    return redirect('catalog:cart')
+
+
+def cart_detail(request):
+    rows, subtotal = _cart_rows(request)
+    return render(request, 'catalog/cart.html', page_context(cart_rows=rows, subtotal=subtotal))
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def payment(request):
+    profile = getattr(request.user, 'client_profile', None)
+    if profile is None:
+        messages.error(request, 'Оформление заказа доступно зарегистрированному клиенту.')
+        return redirect('catalog:register')
+    rows, subtotal = _cart_rows(request)
+    if not rows:
+        messages.info(request, 'Корзина пуста. Добавьте товары перед оплатой.')
+        return redirect('catalog:products')
+    initial = {
+        'full_name': profile.full_name,
+        'email': request.user.email,
+        'phone': profile.phone,
+        'address': profile.address,
+        'delivery_date': timezone.localdate() + timedelta(days=1),
+        'payment_method': 'card',
+    }
+    form = CheckoutForm(request.POST or None, initial=initial)
+    if request.method == 'POST' and form.is_valid():
+        promo = form.promo_code_object
+        discount_percent = promo.discount_percent if promo else 0
+        notes = (
+            f"Доставка: {form.cleaned_data['address']}; "
+            f"{form.cleaned_data['delivery_date'].isoformat()} {form.cleaned_data['delivery_time']}; "
+            f"оплата: {form.cleaned_data['payment_method']}; "
+            f"упаковка: {'да' if form.cleaned_data['gift_wrap'] else 'нет'}; "
+            f"комментарий: {form.cleaned_data['comment']}"
+        )
+        with transaction.atomic():
+            sale = Sale.objects.create(
+                client=profile,
+                promo_code=promo,
+                discount_percent=discount_percent,
+                notes=notes,
+            )
+            for row in rows:
+                SaleItem.objects.create(
+                    sale=sale,
+                    product=row['product'],
+                    quantity=row['quantity'],
+                    unit_price=row['product'].price,
+                )
+            sale.recalculate_total()
+        request.session[CART_SESSION_KEY] = {}
+        request.session.modified = True
+        logger.info('Корзина оплачена sale=%s client=%s amount=%s', sale.pk, profile.pk, sale.total_amount)
+        messages.success(request, 'Заказ успешно оформлен.')
+        return redirect('catalog:payment_success', sale_id=sale.pk)
+    return render(request, 'catalog/payment.html', page_context(form=form, cart_rows=rows, subtotal=subtotal))
+
+
+@login_required
+def payment_success(request, sale_id):
+    sale = get_object_or_404(Sale.objects.prefetch_related('items__product'), pk=sale_id, client__user=request.user)
+    return render(request, 'catalog/payment_success.html', page_context(sale=sale))
 @login_required
 def stats(request):
     if not request.user.is_superuser:

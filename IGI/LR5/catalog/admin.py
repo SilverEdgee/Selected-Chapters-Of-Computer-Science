@@ -2,11 +2,13 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     Client,
+    CompanyMilestone,
     CompanyInfo,
     ContactPerson,
     Employee,
     FAQEntry,
     NewsArticle,
+    Partner,
     Product,
     ProductType,
     PromoCode,
@@ -19,6 +21,11 @@ from .models import (
 )
 class SaleItemInline(admin.TabularInline):
     model = SaleItem
+    extra = 1
+
+
+class CompanyMilestoneInline(admin.TabularInline):
+    model = CompanyMilestone
     extra = 1
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
@@ -51,7 +58,7 @@ class TagAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'name', 'product_type', 'toy_model', 'price', 'is_active', 'created_at')
     list_filter = ('product_type', 'toy_model', 'is_active', 'tags')
-    search_fields = ('code', 'name')
+    search_fields = ('code', 'name', 'description')
     filter_horizontal = ('tags',)
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
@@ -78,6 +85,21 @@ class SaleItemAdmin(admin.ModelAdmin):
 class CompanyInfoAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'updated_at')
     search_fields = ('title', 'description')
+    inlines = [CompanyMilestoneInline]
+
+
+@admin.register(CompanyMilestone)
+class CompanyMilestoneAdmin(admin.ModelAdmin):
+    list_display = ('year', 'title', 'company', 'updated_at')
+    list_filter = ('company', 'year')
+    search_fields = ('title', 'description')
+
+
+@admin.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'website', 'is_active', 'updated_at')
+    list_filter = ('is_active',)
+    search_fields = ('name', 'description', 'website')
 @admin.register(NewsArticle)
 class NewsArticleAdmin(admin.ModelAdmin):
     list_display = ('id', 'image_preview', 'title', 'published_at', 'is_published', 'updated_at')
@@ -88,7 +110,7 @@ class NewsArticleAdmin(admin.ModelAdmin):
     @admin.display(description='Изображение')
     def image_preview(self, obj):
         if obj.image_source:
-            return format_html('<img src="{}" style="max-height: 60px; width: auto;">', obj.image_source)
+            return format_html('<img src="{}" height="60" alt="Превью новости">', obj.image_source)
         return '—'
 @admin.register(FAQEntry)
 class FAQEntryAdmin(admin.ModelAdmin):
@@ -103,7 +125,7 @@ class ContactPersonAdmin(admin.ModelAdmin):
     @admin.display(description='Фото')
     def photo_preview(self, obj):
         if obj.photo_source:
-            return format_html('<img src="{}" style="max-height: 60px; width: auto;">', obj.photo_source)
+            return format_html('<img src="{}" height="60" alt="Фото сотрудника">', obj.photo_source)
         return '—'
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):

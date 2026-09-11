@@ -1,16 +1,86 @@
 {% extends 'catalog/base.html' %}
-{% block title %}О компании{% endblock %}
+{% load static %}
+{% block title %}О компании — Фабрика игрушек{% endblock %}
+{% block meta_description %}История, реквизиты, сертификат и производство фабрики «Добрая игрушка».{% endblock %}
 {% block content %}
-<h1>О компании</h1>
-{% if company %}
-    <div class="card">
-        <p><strong>{{ company.title }}</strong></p>
-        <p>{{ company.description }}</p>
-        <p>{{ company.mission }}</p>
-        <p>{{ company.requisites }}</p>
-        <p>Обновлено: {{ company.updated_at|date:'d/m/Y H:i' }}</p>
-    </div>
-{% else %}
-    <p>Информация о компании пока не заполнена.</p>
-{% endif %}
+<article itemscope itemtype="https://schema.org/Organization">
+    <h1 itemprop="name">О компании</h1>
+    {% if company %}
+    <section>
+        {% if company.logo_source %}<img src="{{ company.logo_source }}" width="120" alt="Логотип {{ company.title }}" itemprop="logo">{% else %}<img src="{% static 'catalog/images/logo.svg' %}" width="120" height="120" alt="Логотип фабрики" itemprop="logo">{% endif %}
+        <h2 id="company-title">{{ company.title }}</h2>
+        <p itemprop="description">{{ company.description }}</p>
+        <p><strong>Миссия:</strong> <em>{{ company.mission }}</em></p>
+        <p><small>Обновлено: <time datetime="{{ company.updated_at|date:'c' }}">{{ company.updated_at|date:'d/m/Y H:i' }}</time></small></p>
+    </section>
+
+    <figure>
+        {% if company.video_url %}
+        <iframe src="{{ company.video_url }}" width="360" height="240" title="Видео о фабрике" loading="lazy" allowfullscreen></iframe>
+        {% else %}
+        <video controls preload="metadata" width="360" poster="{% static 'catalog/images/banner-workshop-360.webp' %}">
+            <source src="{% static 'catalog/media/about-factory.mp4' %}" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+        {% endif %}
+        <figcaption>Короткая видеопрезентация коллекций фабрики.</figcaption>
+    </figure>
+
+    <section>
+        <h2 id="history-title">История по годам</h2>
+        {% for milestone in milestones %}
+        <article><h3><time datetime="{{ milestone.year }}">{{ milestone.year }}</time> — {{ milestone.title }}</h3><p>{{ milestone.description }}</p></article>
+        {% empty %}<p>История компании пока не заполнена.</p>{% endfor %}
+    </section>
+
+    <section>
+        <h2 id="requisites-title">Реквизиты</h2>
+        <p>{{ company.requisites|linebreaksbr }}</p>
+    </section>
+
+    <section>
+        <h2 id="certificate-title">Сертификат</h2>
+        {% if company.certificate_image_source %}
+        <figure>
+            <picture>
+                <source media="(max-width: 600px)" srcset="{{ company.certificate_image_small_source }}" type="image/webp">
+                <img src="{{ company.certificate_image_source }}" width="420" alt="Учебный образец сертификата качества фабрики «Добрая игрушка»">
+            </picture>
+            <figcaption>Учебный образец сертификата качества.</figcaption>
+        </figure>
+        {% endif %}
+        <p>{{ company.certificate_text|default:'Сведения о сертификате пока не заполнены.'|linebreaksbr }}</p>
+        <p><small>Изображение и описание сертификата доступны для изменения через административную панель.</small></p>
+    </section>
+    {% else %}<p>Информация о компании пока не заполнена.</p>{% endif %}
+
+    <section>
+        <h2 id="quality-table-title">Контроль качества</h2>
+        <table>
+            <caption>Показатели проверки демонстрационной партии</caption>
+            <thead>
+                <tr><th id="stage" rowspan="2" scope="col">Этап</th><th id="material" colspan="2" scope="colgroup">Материалы</th><th id="result" rowspan="2" scope="col">Результат</th></tr>
+                <tr><th id="wood" scope="col">Древесина, шт.</th><th id="textile" scope="col">Текстиль, шт.</th></tr>
+            </thead>
+            <tbody>
+                <tr><th id="incoming" scope="row">Входной контроль</th><td headers="stage incoming material wood">120</td><td headers="stage incoming material textile">80</td><td headers="stage incoming result"><strong>Пройден</strong></td></tr>
+                <tr><th id="final" scope="row">Финальная проверка</th><td headers="stage final material wood">118</td><td headers="stage final material textile">79</td><td headers="stage final result">98,5%</td></tr>
+                <tr><th id="total" scope="row">Итого принято</th><td headers="stage total material wood" colspan="2">197 изделий</td><td headers="stage total result"><mark>Допущено</mark></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2 id="language-title">Как мы говорим о качестве</h2>
+        <p><dfn id="eco-toy">Экологичная игрушка</dfn> — изделие, для которого учитываются безопасность материалов и возможность переработки упаковки. Сокращение <abbr title="Технический регламент Таможенного союза">ТР ТС</abbr> встречается в документах о безопасности. В формуле контроля риск обозначим как <var>R</var>, а допустимое значение — R&lt;10<sup>−3</sup>.</p>
+        <blockquote cite="https://www.unicef.org/parenting/child-care/what-is-free-play"><p>Игра помогает ребёнку исследовать мир, придумывать правила и учиться взаимодействию.</p><footer>По материалам <cite>UNICEF Parenting</cite></footer></blockquote>
+        <p>Наш принцип: <q>проверяем каждую партию</q>. Процесс изменился: <del>выборочная проверка</del> <ins>поэтапный контроль</ins>.</p>
+        <pre>Из дерева — поезд, из ткани — медведь,
+Им хочется с нами смеяться и петь.
+Мы каждую деталь проверим опять,
+Чтоб детям хотелось творить и играть.</pre>
+        <p>Сузьте окно браузера и наблюдайте возможный перенос учебного длинного слова: игрушечно<wbr>производственно<wbr>сертификационно<wbr>испытательный<wbr>контроль<wbr>материалов.</p>
+        <p><a href="https://validator.w3.org/" target="_blank" rel="noopener noreferrer">Проверить HTML во внешнем валидаторе</a> · <a href="{% static 'catalog/docs/toy-care-guide.txt' %}" download>Скачать памятку</a> · <a href="{% url 'catalog:toy_selection' %}">Подобрать игрушку</a></p>
+    </section>
+</article>
 {% endblock %}

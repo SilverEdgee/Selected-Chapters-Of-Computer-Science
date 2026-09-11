@@ -5,11 +5,13 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from catalog.models import (
     Client,
+    CompanyMilestone,
     CompanyInfo,
     ContactPerson,
     Employee,
     FAQEntry,
     NewsArticle,
+    Partner,
     Product,
     ProductType,
     PromoCode,
@@ -36,7 +38,7 @@ class Command(BaseCommand):
         client_user.set_password('client123')
         client_user.save()
         types = [ProductType.objects.get_or_create(name=name, defaults={'description': f'Описание категории {name}'})[0] for name in ['Плюшевые', 'Конструкторы', 'Настольные']]
-        models = [ToyModel.objects.get_or_create(name=name, defaults={'description': f'Модель {name}'})[0] for name in ['Модель A', 'Модель B', 'Модель C', 'Модель D']]
+        models = [ToyModel.objects.get_or_create(name=name, defaults={'description': name})[0] for name in ['Модель A', 'Модель B', 'Модель C', 'Модель D']]
         tags = [Tag.objects.get_or_create(name=name)[0] for name in ['образовательный', 'мягкий', 'коллекционный', 'яркий']]
         products = []
         for i in range(1, 11):
@@ -47,6 +49,7 @@ class Command(BaseCommand):
                     'product_type': types[i % len(types)],
                     'toy_model': models[i % len(models)],
                     'price': Decimal('10.00') + Decimal(i) * Decimal('3.5'),
+                    'description': f'Безопасная игрушка №{i} из прочных материалов для творчества и развития.',
                     'is_active': True,
                 },
             )
@@ -78,14 +81,60 @@ class Command(BaseCommand):
                 'description': 'Компания занимается производством и продажей игрушек.',
                 'mission': 'Обеспечивать детей качественными игрушками.',
                 'requisites': 'Реквизиты компании для демонстрации.',
+                'certificate_text': 'Сертификат соответствия BY/112 03.11. ТР008 00125 подтверждает безопасность демонстрационной продукции.',
+                'certificate_image_static_path': 'catalog/images/certificate-demo-720.webp',
             },
         )
-        for idx in range(1, 11):
-            NewsArticle.objects.get_or_create(
-                title=f'Новость {idx}',
+        if not company.certificate_text:
+            company.certificate_text = 'Сертификат соответствия BY/112 03.11. ТР008 00125 подтверждает безопасность демонстрационной продукции.'
+            company.save(update_fields=['certificate_text', 'updated_at'])
+        if not company.certificate_image and not company.certificate_image_static_path:
+            company.certificate_image_static_path = 'catalog/images/certificate-demo-720.webp'
+            company.save(update_fields=['certificate_image_static_path', 'updated_at'])
+        for year, title, description in [
+            (2014, 'Открытие мастерской', 'Начали выпуск небольших серий деревянных игрушек.'),
+            (2018, 'Собственная лаборатория', 'Организовали контроль материалов и качества каждой партии.'),
+            (2022, 'Интернет-каталог', 'Открыли онлайн-заказ и доставку по Беларуси.'),
+            (2026, 'Экологичная коллекция', 'Перешли на перерабатываемую упаковку для основной линейки.'),
+        ]:
+            CompanyMilestone.objects.get_or_create(
+                company=company,
+                year=year,
+                defaults={'title': title, 'description': description},
+            )
+        for name, website, description, logo_path in [
+            ('БелЛесИгрушка', 'https://www.bellesbumprom.by/', 'Поставщик сертифицированной древесины.', 'catalog/images/partner-forest.svg'),
+            ('Добрая доставка', 'https://belpost.by/', 'Партнёр по доставке заказов.', 'catalog/images/partner-delivery.svg'),
+            ('Мир детства', 'https://edu.gov.by/', 'Образовательный партнёр фабрики.', 'catalog/images/partner-education.svg'),
+        ]:
+            Partner.objects.get_or_create(
+                name=name,
                 defaults={
-                    'summary': f'Краткое содержание новости {idx}',
-                    'body': f'Полный текст новости {idx}.',
+                    'website': website,
+                    'description': description,
+                    'logo_static_path': logo_path,
+                    'is_active': True,
+                },
+            )
+        news = [
+            ('Новая коллекция деревянных игрушек', 'В мастерской завершена новая серия поездов, фигурок животных и строительных наборов.', 'new-collection'),
+            ('Как фабрика проверяет качество игрушек', 'Каждая игрушка проходит проверку сборки, размеров деталей и безопасности покрытия.', 'quality-control'),
+            ('Экологичные материалы в производстве', 'Для новых серий используются древесина, хлопковые ткани и перерабатываемая упаковка.', 'eco-materials'),
+            ('Новая упаковка для доставки заказов', 'Игрушки теперь отправляются в прочных коробках с бумажным наполнителем.', 'order-packing'),
+            ('Развивающие наборы для дошкольников', 'В каталог добавлены сортеры, пирамидки и наборы для изучения форм и цветов.', 'educational-toys'),
+            ('Как дизайнеры создают новую игрушку', 'Показываем путь от первого эскиза до готового деревянного образца.', 'design-studio'),
+            ('Мастерская расширила производство', 'Дополнительные рабочие места позволят выпускать больше деревянных игрушек.', 'new-collection'),
+            ('Месяц усиленного контроля качества', 'Специалисты дополнительно проверяют крепления и качество обработки каждой партии.', 'quality-control'),
+            ('Фабрика сокращает использование пластика', 'В упаковке заказов пластик постепенно заменяется бумагой и натуральными материалами.', 'eco-materials'),
+            ('Игры, которые помогают развитию', 'Новая подборка знакомит детей с формами, цветами и построением простых конструкций.', 'educational-toys'),
+        ]
+        for idx, (title, summary, image_name) in enumerate(news, start=1):
+            NewsArticle.objects.get_or_create(
+                title=title,
+                defaults={
+                    'summary': summary,
+                    'body': f'{summary} Материал подготовлен фабрикой «Добрая игрушка».',
+                    'image_static_path': f'catalog/images/news/{image_name}-720.webp',
                     'published_at': timezone.now() - timedelta(days=idx * 3),
                     'is_published': True,
                 },

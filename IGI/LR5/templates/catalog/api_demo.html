@@ -3,6 +3,32 @@
 {% block content %}
 <h1>Полезные сторонние API</h1>
 
+<section>
+    <h2>Пример запроса к каталогу</h2>
+    <p>Этот листинг показывает запрос первой страницы каталога и пример ответа сервера.</p>
+    <pre><code>GET /api/v1/products/?q=Игрушка&amp;page=1&amp;per=1 HTTP/1.1
+Host: 127.0.0.1:8000
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "count": 10,
+  "page": 1,
+  "per": 1,
+  "items": [
+    {
+      "id": 1,
+      "code": "TOY-001",
+      "name": "Игрушка 1",
+      "price": "13.50",
+      "product_type": "Конструкторы"
+    }
+  ]
+}</code></pre>
+</section>
+
 <div class="card">
     <h2>Курсы валют к BYN</h2>
     {% if currency_rates %}
