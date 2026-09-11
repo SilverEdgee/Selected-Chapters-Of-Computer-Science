@@ -1,4 +1,5 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 {% block title %}Подбор игрушки{% endblock %}
 {% block content %}
 <h1>Подбор игрушки</h1>
@@ -30,4 +31,103 @@
     {% empty %}<p>По выбранным критериям игрушки не найдены.</p>{% endfor %}
 </section>
 {% endif %}
+
+<section id="input-demo">
+    <h2>Учебный стенд HTML input</h2>
+    <p>Эти элементы записаны непосредственно тегами <code>&lt;input&gt;</code>, а не созданы через Django-форму. Введённые данные никуда не сохраняются.</p>
+
+    <form id="input-demo-form" method="post" action="#input-demo" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="demo_source" value="input-laboratory">
+
+        <fieldset>
+            <legend>Текстовые и числовые поля</legend>
+
+            <p><label for="demo-text">Обычный текст</label><br><input id="demo-text" name="demo_text" type="text" placeholder="Название игрушки" minlength="2" maxlength="40" required></p>
+            <p><label for="demo-password">Пароль</label><br><input id="demo-password" name="demo_password" type="password" minlength="8" autocomplete="new-password"></p>
+            <p><label for="demo-email">Email</label><br><input id="demo-email" name="demo_email" type="email" placeholder="name@example.com" autocomplete="email"></p>
+            <p><label for="demo-tel">Телефон</label><br><input id="demo-tel" name="demo_tel" type="tel" placeholder="+375 (29) 123-45-67" pattern="\+375 \(29\) [0-9]{3}-[0-9]{2}-[0-9]{2}" autocomplete="tel"></p>
+            <p><label for="demo-url">Адрес сайта</label><br><input id="demo-url" name="demo_url" type="url" placeholder="https://example.com"></p>
+            <p><label for="demo-search">Поиск</label><br><input id="demo-search" name="demo_search" type="search" placeholder="Что найти?"></p>
+            <p><label for="demo-number">Количество</label><br><input id="demo-number" name="demo_number" type="number" min="1" max="20" step="1" value="1"></p>
+            <p><label for="demo-range">Возраст ребёнка</label><br><input id="demo-range" name="demo_range" type="range" min="1" max="16" step="1" value="6"></p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Дата, время, файл и цвет</legend>
+
+            <p><label for="demo-date">Дата</label><br><input id="demo-date" name="demo_date" type="date"></p>
+            <p><label for="demo-time">Время</label><br><input id="demo-time" name="demo_time" type="time"></p>
+            <p><label for="demo-month">Месяц</label><br><input id="demo-month" name="demo_month" type="month"></p>
+            <p><label for="demo-week">Неделя</label><br><input id="demo-week" name="demo_week" type="week"></p>
+            <p><label for="demo-color">Цвет игрушки</label><br><input id="demo-color" name="demo_color" type="color" value="#087f72"></p>
+            <p><label for="demo-file">Изображение</label><br><input id="demo-file" name="demo_file" type="file" accept="image/png,image/jpeg,image/webp" multiple></p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Переключатели</legend>
+
+            <p>Материал:</p>
+            <p><input id="material-wood" name="demo_material" type="radio" value="wood" checked><label for="material-wood">Дерево</label></p>
+            <p><input id="material-textile" name="demo_material" type="radio" value="textile"><label for="material-textile">Текстиль</label></p>
+            <p><input id="demo-safe" name="demo_safe" type="checkbox" value="yes" checked><label for="demo-safe">Только безопасные материалы</label></p>
+            <p><label for="demo-readonly">Поле только для чтения</label><br><input id="demo-readonly" type="text" value="Это поле можно только читать" readonly></p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Кнопки, созданные через input</legend>
+
+            <p><input type="submit" name="demo_action" value="Отправить с проверкой" formaction="#input-demo" formmethod="post" formenctype="multipart/form-data" formtarget="_self" title="Проверяет ограничения полей и отправляет форму"></p>
+            <p><input type="submit" name="demo_action" value="Отправить без проверки" formnovalidate title="Отправляет форму без встроенной проверки браузера"></p>
+            <p><input type="reset" value="Вернуть начальные значения" title="Сбрасывает только поля этого учебного стенда"></p>
+            <p><input type="button" value="Обычная кнопка" title="Без JavaScript эта кнопка не выполняет действие"></p>
+            <p><input type="image" src="{% static 'catalog/images/logo.svg' %}" alt="Отправить форму изображением" name="demo_image" width="46" height="46" formnovalidate title="Изображение работает как кнопка отправки"></p>
+            <p><input type="submit" value="Недоступная кнопка" disabled title="Атрибут disabled запрещает нажатие"></p>
+        </fieldset>
+    </form>
+
+    <h3>Какие виды input показаны</h3>
+    <dl>
+        <dt><code>type="text"</code></dt><dd>Обычная строка текста.</dd>
+        <dt><code>type="password"</code></dt><dd>Скрывает введённые символы.</dd>
+        <dt><code>type="email"</code></dt><dd>Проверяет общий формат электронной почты.</dd>
+        <dt><code>type="tel"</code></dt><dd>Поле для телефона; точную проверку задаёт <code>pattern</code>.</dd>
+        <dt><code>type="url"</code></dt><dd>Ожидает адрес сайта.</dd>
+        <dt><code>type="search"</code></dt><dd>Строка поискового запроса.</dd>
+        <dt><code>type="number"</code></dt><dd>Число с ограничениями <code>min</code>, <code>max</code> и <code>step</code>.</dd>
+        <dt><code>type="range"</code></dt><dd>Ползунок для выбора значения из диапазона.</dd>
+        <dt><code>date, time, month, week</code></dt><dd>Выбор даты, времени, месяца и недели.</dd>
+        <dt><code>type="color"</code></dt><dd>Открывает выбор цвета.</dd>
+        <dt><code>type="file"</code></dt><dd>Открывает выбор файлов.</dd>
+        <dt><code>type="radio"</code></dt><dd>Позволяет выбрать один вариант с одинаковым <code>name</code>.</dd>
+        <dt><code>type="checkbox"</code></dt><dd>Независимый флажок, который можно включить или выключить.</dd>
+        <dt><code>type="hidden"</code></dt><dd>Не отображается, но отправляет служебное значение вместе с формой.</dd>
+    </dl>
+
+    <h3>Что означают атрибуты</h3>
+    <dl>
+        <dt><code>type</code></dt><dd>Определяет вид и поведение поля или кнопки.</dd>
+        <dt><code>id</code></dt><dd>Уникальное имя элемента, на которое ссылается <code>label for</code>.</dd>
+        <dt><code>name</code></dt><dd>Имя параметра, под которым значение отправляется серверу.</dd>
+        <dt><code>value</code></dt><dd>Начальное или отправляемое значение; у кнопки это надпись.</dd>
+        <dt><code>placeholder</code></dt><dd>Краткий пример внутри пустого поля; не заменяет <code>label</code>.</dd>
+        <dt><code>required</code></dt><dd>Не разрешает обычную отправку, пока поле не заполнено.</dd>
+        <dt><code>minlength, maxlength</code></dt><dd>Ограничивают длину текста.</dd>
+        <dt><code>min, max, step</code></dt><dd>Задают минимальное, максимальное значение и шаг числа или ползунка.</dd>
+        <dt><code>pattern</code></dt><dd>Задаёт шаблон допустимого текста в виде регулярного выражения.</dd>
+        <dt><code>checked</code></dt><dd>Предварительно выбирает radio или checkbox.</dd>
+        <dt><code>readonly</code></dt><dd>Запрещает редактирование, но значение поля отправляется.</dd>
+        <dt><code>disabled</code></dt><dd>Полностью отключает элемент; его значение не отправляется.</dd>
+        <dt><code>accept</code></dt><dd>Подсказывает допустимые типы файлов.</dd>
+        <dt><code>multiple</code></dt><dd>Разрешает выбрать несколько файлов.</dd>
+        <dt><code>autocomplete</code></dt><dd>Подсказывает браузеру назначение данных для автозаполнения.</dd>
+        <dt><code>formnovalidate</code></dt><dd>У кнопки submit отключает встроенную проверку полей для этой отправки.</dd>
+        <dt><code>formaction</code></dt><dd>У кнопки submit переопределяет адрес отправки родительской формы.</dd>
+        <dt><code>formmethod</code></dt><dd>У кнопки submit переопределяет метод отправки, например <code>get</code> или <code>post</code>.</dd>
+        <dt><code>formenctype</code></dt><dd>Задаёт способ кодирования данных; <code>multipart/form-data</code> нужен для передачи файлов.</dd>
+        <dt><code>formtarget</code></dt><dd>Определяет, где открыть ответ; <code>_self</code> означает текущую вкладку.</dd>
+        <dt><code>src, alt, width, height</code></dt><dd>Для <code>type="image"</code> задают картинку, её текстовую замену и размеры.</dd>
+        <dt><code>title</code></dt><dd>Добавляет дополнительную подсказку при наведении.</dd>
+    </dl>
+</section>
 {% endblock %}

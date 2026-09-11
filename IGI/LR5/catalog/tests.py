@@ -298,7 +298,7 @@ class CoreDomainTests(TestCase):
         self.assertContains(response, 'Тестовый партнёр')
         self.assertContains(response, 'https://schema.org/Product')
         self.assertContains(response, 'meta name="description"', html=False)
-        self.assertContains(response, 'banner-workshop-360.webp')
+        self.assertContains(response, 'banner-workshop-mobile-280.webp')
         self.assertContains(response, 'banner-workshop-1024.webp')
         self.assertContains(response, '<audio', html=False)
 

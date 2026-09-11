@@ -82,5 +82,126 @@
         <p>Сузьте окно браузера и наблюдайте возможный перенос учебного длинного слова: игрушечно<wbr>производственно<wbr>сертификационно<wbr>испытательный<wbr>контроль<wbr>материалов.</p>
         <p><a href="https://validator.w3.org/" target="_blank" rel="noopener noreferrer">Проверить HTML во внешнем валидаторе</a> · <a href="{% static 'catalog/docs/toy-care-guide.txt' %}" download>Скачать памятку</a> · <a href="{% url 'catalog:toy_selection' %}">Подобрать игрушку</a></p>
     </section>
+
+    <section id="text-elements-guide">
+        <h2>Учебная памятка по текстовым тегам и их атрибутам</h2>
+        <p>Памятка показывает не только внешний результат, но и правильное смысловое назначение элементов. У многих текстовых тегов нет собственных специальных атрибутов: для них доступны только глобальные атрибуты HTML.</p>
+
+        <h3>Живые примеры</h3>
+        <p><strong>Важная информация</strong> размечается через <code>&lt;strong&gt;</code>, а <em>смысловое ударение</em> — через <code>&lt;em&gt;</code>. Тег <b>визуально выделяет текст</b> без повышения важности, а <i>обозначает термин или особую интонацию</i>.</p>
+        <p><mark>Актуальный результат проверки</mark> выделен через <code>&lt;mark&gt;</code>. Юридическое примечание можно показать тегом <small>мелкий дополнительный текст</small>.</p>
+        <p>Формула: <var>R</var> = <var>n</var><sub>брак</sub> / <var>n</var><sub>всего</sub>, допустимое значение — 10<sup>−3</sup>.</p>
+        <p>Для обновления страницы нажмите <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>. Пример результата программы: <samp>Проверено страниц: 12; ошибок: 0</samp>.</p>
+        <p><abbr title="Технический регламент Таможенного союза">ТР ТС</abbr> — сокращение, а <dfn id="quality-control-definition">контроль качества</dfn> — определяемый термин.</p>
+        <p>Короткая цитата располагается в строке: <q cite="https://www.unicef.org/parenting/child-care/what-is-free-play">игра помогает ребёнку исследовать мир</q>.</p>
+        <blockquote cite="https://www.unicef.org/parenting/child-care/what-is-free-play">
+            <p>Развивающая игра объединяет любопытство, самостоятельность и безопасное исследование окружающего мира.</p>
+            <footer>Учебное изложение по материалам <cite>UNICEF Parenting</cite></footer>
+        </blockquote>
+        <p>Изменение документа: <del cite="{% url 'catalog:about' %}" datetime="2026-09-10">выборочный контроль</del> <ins cite="{% url 'catalog:about' %}" datetime="2026-09-11">поэтапный контроль</ins>.</p>
+        <p>Машиночитаемая дата: <time datetime="2026-09-11T09:00:00+03:00">11 сентября 2026 года, 09:00</time>. Код товара: <data value="TOY-001">Игрушка 1</data>.</p>
+
+        <h3>Многострочный листинг</h3>
+        <pre><code>&lt;article itemscope itemtype="https://schema.org/Product"&gt;
+    &lt;h2 itemprop="name"&gt;Деревянный конструктор&lt;/h2&gt;
+    &lt;p itemprop="description"&gt;Игрушка для творчества&lt;/p&gt;
+    &lt;p itemprop="offers"
+       itemscope
+       itemtype="https://schema.org/Offer"&gt;
+        &lt;span itemprop="price"&gt;45.00&lt;/span&gt;
+        &lt;span itemprop="priceCurrency"&gt;BYN&lt;/span&gt;
+    &lt;/p&gt;
+&lt;/article&gt;</code></pre>
+
+        <h3>Назначение тегов и специальные атрибуты</h3>
+        <table>
+            <caption>Текстовые элементы, показанные на странице</caption>
+            <thead>
+                <tr><th scope="col">Тег</th><th scope="col">Назначение</th><th scope="col">Специальные атрибуты</th></tr>
+            </thead>
+            <tbody>
+                <tr><th scope="row"><code>&lt;code&gt;</code></th><td>Фрагмент программного кода.</td><td>Собственных нет; доступны глобальные атрибуты.</td></tr>
+                <tr><th scope="row"><code>&lt;pre&gt;</code></th><td>Сохраняет пробелы и переводы строк исходного текста.</td><td>Собственных нет; для листинга обычно содержит <code>&lt;code&gt;</code>.</td></tr>
+                <tr><th scope="row"><code>&lt;kbd&gt;</code></th><td>Ввод пользователя с клавиатуры или другого устройства.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;samp&gt;</code></th><td>Результат работы программы.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;var&gt;</code></th><td>Переменная в формуле или программе.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;strong&gt;</code></th><td>Высокая важность содержимого.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;em&gt;</code></th><td>Смысловое ударение, меняющее интонацию фразы.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;b&gt;</code></th><td>Привлечение внимания без повышения смысловой важности.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;i&gt;</code></th><td>Термин, особая интонация, мысль или текст на другом языке.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;small&gt;</code></th><td>Примечание, оговорка или дополнительная информация.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;mark&gt;</code></th><td>Текст, актуальный или релевантный в текущем контексте.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;sub&gt;</code>, <code>&lt;sup&gt;</code></th><td>Нижний и верхний индекс.</td><td>Собственных нет.</td></tr>
+                <tr><th scope="row"><code>&lt;abbr&gt;</code></th><td>Сокращение или аббревиатура.</td><td><code>title</code> содержит полную расшифровку.</td></tr>
+                <tr><th scope="row"><code>&lt;dfn&gt;</code></th><td>Первое определение термина.</td><td>Собственных нет; <code>id</code> позволяет создать якорь на определение.</td></tr>
+                <tr><th scope="row"><code>&lt;q&gt;</code></th><td>Короткая цитата внутри текущего абзаца.</td><td><code>cite</code> содержит URL источника цитаты.</td></tr>
+                <tr><th scope="row"><code>&lt;blockquote&gt;</code></th><td>Отдельная блочная цитата.</td><td><code>cite</code> содержит URL источника.</td></tr>
+                <tr><th scope="row"><code>&lt;cite&gt;</code></th><td>Название произведения или источника.</td><td>Собственных нет; это тег, не атрибут <code>cite</code>.</td></tr>
+                <tr><th scope="row"><code>&lt;del&gt;</code></th><td>Удалённый фрагмент документа.</td><td><code>cite</code> — источник объяснения; <code>datetime</code> — дата изменения.</td></tr>
+                <tr><th scope="row"><code>&lt;ins&gt;</code></th><td>Добавленный фрагмент документа.</td><td><code>cite</code> — источник объяснения; <code>datetime</code> — дата изменения.</td></tr>
+                <tr><th scope="row"><code>&lt;time&gt;</code></th><td>Дата, время или период.</td><td><code>datetime</code> задаёт машинно-читаемое значение.</td></tr>
+                <tr><th scope="row"><code>&lt;data&gt;</code></th><td>Связывает видимый текст с машинным значением.</td><td><code>value</code> содержит машинно-читаемое значение.</td></tr>
+                <tr><th scope="row"><code>&lt;br&gt;</code></th><td>Обязательный перевод строки.</td><td>Собственных нет; закрывающий тег не нужен.</td></tr>
+                <tr><th scope="row"><code>&lt;wbr&gt;</code></th><td>Разрешённое место переноса длинного слова.</td><td>Собственных нет; закрывающий тег не нужен.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Глобальные атрибуты текстовых тегов</h3>
+        <p>Эти атрибуты можно применять почти к любому элементу HTML, включая <code>code</code>, <code>pre</code>, <code>strong</code>, <code>em</code>, <code>kbd</code> и <code>samp</code>.</p>
+
+        <h4>Практический пример</h4>
+        <p id="global-attributes-example"
+           class="training-example"
+           title="Подсказка создана глобальным атрибутом title"
+           lang="ru"
+           dir="ltr"
+           data-product-code="TOY-001">
+            Наведите указатель на этот абзац: браузер покажет значение <code>title</code>. У абзаца также заданы <code>id</code>, <code>class</code>, <code>lang</code>, <code>dir</code> и собственный атрибут <code>data-product-code</code>.
+        </p>
+        <p contenteditable="true" spellcheck="true" title="Этот текст разрешено редактировать">
+            Этот текст можно изменить прямо на странице. Это работа <code>contenteditable="true"</code>, а <code>spellcheck="true"</code> разрешает браузеру проверять орфографию.
+        </p>
+        <p draggable="true" translate="no" title="Этот абзац можно перетащить">
+            Попробуйте перетащить этот абзац. Здесь используются <code>draggable="true"</code> и <code>translate="no"</code>.
+        </p>
+        <p hidden>Этот учебный абзац присутствует в HTML, но не показывается из-за глобального атрибута hidden.</p>
+
+        <h4>HTML-код примера</h4>
+        <pre><code>&lt;p id="global-attributes-example"
+   class="training-example"
+   title="Подсказка при наведении"
+   lang="ru"
+   dir="ltr"
+   data-product-code="TOY-001"&gt;
+    Учебный товар
+&lt;/p&gt;
+
+&lt;p contenteditable="true" spellcheck="true"&gt;
+    Этот текст можно редактировать.
+&lt;/p&gt;
+
+&lt;p draggable="true" translate="no"&gt;
+    Этот абзац можно перетащить.
+&lt;/p&gt;
+
+&lt;p hidden&gt;Этот текст скрыт.&lt;/p&gt;</code></pre>
+
+        <h4>Назначение и допустимые значения</h4>
+        <dl>
+            <dt><code>id</code></dt><dd>Уникальный идентификатор элемента и цель якорной ссылки.</dd>
+            <dt><code>class</code></dt><dd>Имя одной или нескольких групп элементов; само по себе без CSS и JavaScript ничего не изменяет.</dd>
+            <dt><code>title</code></dt><dd>Дополнительная подсказка; браузер часто показывает её при наведении.</dd>
+            <dt><code>lang</code></dt><dd>Язык содержимого, например <code>lang="ru"</code> или <code>lang="en"</code>.</dd>
+            <dt><code>dir</code></dt><dd>Направление текста: <code>ltr</code>, <code>rtl</code> или <code>auto</code>.</dd>
+            <dt><code>hidden</code></dt><dd>Скрывает элемент до тех пор, пока приложение не изменит его состояние.</dd>
+            <dt><code>data-*</code></dt><dd>Хранит пользовательские данные, например <code>data-code="TOY-001"</code>.</dd>
+            <dt><code>contenteditable</code></dt><dd>При значении <code>true</code> разрешает редактировать содержимое прямо в браузере.</dd>
+            <dt><code>spellcheck</code></dt><dd>Включает или отключает проверку орфографии: <code>true</code> или <code>false</code>.</dd>
+            <dt><code>translate</code></dt><dd>Разрешает или запрещает перевод содержимого: <code>yes</code> или <code>no</code>.</dd>
+            <dt><code>draggable</code></dt><dd>Указывает, можно ли перетаскивать элемент: <code>true</code> или <code>false</code>.</dd>
+            <dt><code>tabindex</code></dt><dd>Управляет возможностью получения клавиатурного фокуса и порядком перехода клавишей Tab.</dd>
+            <dt><code>accesskey</code></dt><dd>Назначает клавишу быстрого доступа; сочетание зависит от браузера и системы.</dd>
+        </dl>
+    </section>
 </article>
 {% endblock %}

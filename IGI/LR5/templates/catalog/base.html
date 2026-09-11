@@ -7,8 +7,6 @@
     <meta name="description" content="{% block meta_description %}Каталог безопасных игрушек фабрики Добрая игрушка: товары, новости, вакансии и контакты.{% endblock %}">
     <meta name="keywords" content="игрушки, фабрика игрушек, каталог, детские товары, Минск"> <!--deprecated-->
     <meta name="author" content="Фабрика игрушек">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
     <link rel="icon" href="{% static 'catalog/images/favicon.svg' %}" type="image/svg+xml">
     <title>{% block title %}Фабрика игрушек{% endblock %}</title>
     {% block extra_head %}{% endblock %}
@@ -28,7 +26,7 @@
             <a href="{% url 'catalog:news' %}">Новости</a> |
             <a href="{% url 'catalog:contacts' %}">Контакты</a> |
             <a href="{% url 'catalog:cart' %}">Корзина ({{ cart_item_count }})</a>
-        </nav>
+        </nav>HTML
         <p>
             {% if user.is_authenticated %}
                 <a href="{% url 'catalog:dashboard' %}">Кабинет</a>

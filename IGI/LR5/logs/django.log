@@ -1465,3 +1465,270 @@ INFO 2026-09-11 03:14:49,188 font_manager Failed to extract font properties from
 INFO 2026-09-11 03:14:49,506 font_manager generated new fontManager
 INFO 2026-09-11 03:15:41,971 autoreload /home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py changed, reloading.
 INFO 2026-09-11 03:15:42,254 autoreload Watching for file changes with StatReloader
+INFO 2026-09-11 15:16:55,924 autoreload Watching for file changes with StatReloader
+INFO 2026-09-11 15:23:48,937 views Товар добавлен в корзину product=1 qty=1
+INFO 2026-09-11 15:23:51,083 views Товар добавлен в корзину product=1 qty=1
+WARNING 2026-09-11 15:29:54,738 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:29:54,739 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-cyb1mv2q because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:29:57,113 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:29:58,114 font_manager generated new fontManager
+WARNING 2026-09-11 15:29:59,810 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:29:59,811 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-7igc8bci because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:30:01,220 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:30:01,540 font_manager generated new fontManager
+INFO 2026-09-11 15:30:03,504 autoreload Watching for file changes with StatReloader
+WARNING 2026-09-11 15:30:03,801 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:30:03,801 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-sfa_o6kv because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:30:04,755 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:30:05,440 font_manager generated new fontManager
+WARNING 2026-09-11 15:30:47,255 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:30:47,255 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-5bfywunl because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:30:48,698 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:30:49,208 font_manager generated new fontManager
+WARNING 2026-09-11 15:30:53,813 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:30:53,814 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-_w2cvhni because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:30:57,708 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:30:58,130 font_manager generated new fontManager
+WARNING 2026-09-11 15:31:00,388 log Forbidden: /api/v1/clients/by-city/
+WARNING 2026-09-11 15:31:05,499 log Forbidden: /api/v1/employee/sales/
+WARNING 2026-09-11 15:31:38,481 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:31:38,482 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-4vrnxtqc because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:31:39,046 views Товар добавлен в корзину product=1 qty=1
+INFO 2026-09-11 15:31:41,058 views Товар добавлен в корзину product=1 qty=2
+INFO 2026-09-11 15:31:41,062 views Товар добавлен в корзину product=2 qty=1
+INFO 2026-09-11 15:31:41,190 views Корзина оплачена sale=1 client=1 amount=55.00
+INFO 2026-09-11 15:31:42,380 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:31:42,940 font_manager generated new fontManager
+WARNING 2026-09-11 15:31:45,474 log Forbidden: /api/v1/clients/by-city/
+INFO 2026-09-11 15:31:50,663 views Создана покупка product=1 client=1 qty=3 promo=None discount=0
+WARNING 2026-09-11 15:31:51,093 log Forbidden: /api/v1/employee/sales/
+INFO 2026-09-11 15:31:52,567 views Создана покупка product=1 client=1 qty=5 promo=TOY20 discount=20
+INFO 2026-09-11 15:31:55,215 views Создан пользователь newclient
+INFO 2026-09-11 15:32:00,828 views Товар добавлен в корзину product=1 qty=2
+WARNING 2026-09-11 15:32:02,713 log Forbidden (Permission denied): /manage/product-types/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 763, in model_list
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+WARNING 2026-09-11 15:32:02,724 log Forbidden (Permission denied): /manage/product-types/add/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 771, in model_create
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+WARNING 2026-09-11 15:32:06,541 log Forbidden (Permission denied): /stats/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 457, in stats
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+INFO 2026-09-11 15:32:08,787 views Создан объект product-types: Развивающие
+INFO 2026-09-11 15:32:08,804 views Обновлён объект product-types: Развивающие обновлённые
+INFO 2026-09-11 15:32:08,820 views Удалён объект product-types: Развивающие обновлённые
+INFO 2026-09-11 15:32:24,556 views Товар добавлен в корзину product=1 qty=1
+INFO 2026-09-11 15:32:26,203 views Товар добавлен в корзину product=1 qty=2
+INFO 2026-09-11 15:32:26,208 views Товар добавлен в корзину product=2 qty=1
+INFO 2026-09-11 15:32:26,309 views Корзина оплачена sale=1 client=1 amount=55.00
+INFO 2026-09-11 15:32:34,504 views Создана покупка product=1 client=1 qty=3 promo=None discount=0
+INFO 2026-09-11 15:32:36,178 views Создана покупка product=1 client=1 qty=5 promo=TOY20 discount=20
+INFO 2026-09-11 15:32:38,523 views Создан пользователь newclient
+INFO 2026-09-11 15:32:43,679 views Товар добавлен в корзину product=1 qty=2
+WARNING 2026-09-11 15:32:45,510 log Forbidden (Permission denied): /manage/product-types/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 763, in model_list
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+WARNING 2026-09-11 15:32:45,515 log Forbidden (Permission denied): /manage/product-types/add/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 771, in model_create
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+WARNING 2026-09-11 15:32:48,955 log Forbidden (Permission denied): /stats/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 457, in stats
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+INFO 2026-09-11 15:32:50,873 views Создан объект product-types: Развивающие
+INFO 2026-09-11 15:32:50,885 views Обновлён объект product-types: Развивающие обновлённые
+INFO 2026-09-11 15:32:50,897 views Удалён объект product-types: Развивающие обновлённые
+WARNING 2026-09-11 15:33:54,124 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:33:54,125 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-nv3c2m5q because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:33:58,074 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:33:58,823 font_manager generated new fontManager
+WARNING 2026-09-11 15:34:01,166 log Forbidden: /api/v1/clients/by-city/
+WARNING 2026-09-11 15:34:06,324 log Forbidden: /api/v1/employee/sales/
+INFO 2026-09-11 15:34:38,558 views Товар добавлен в корзину product=1 qty=1
+INFO 2026-09-11 15:34:40,484 views Товар добавлен в корзину product=1 qty=2
+INFO 2026-09-11 15:34:40,488 views Товар добавлен в корзину product=2 qty=1
+INFO 2026-09-11 15:34:40,598 views Корзина оплачена sale=1 client=1 amount=55.00
+INFO 2026-09-11 15:34:49,043 views Создана покупка product=1 client=1 qty=3 promo=None discount=0
+INFO 2026-09-11 15:34:50,824 views Создана покупка product=1 client=1 qty=5 promo=TOY20 discount=20
+INFO 2026-09-11 15:34:53,096 views Создан пользователь newclient
+INFO 2026-09-11 15:34:58,313 views Товар добавлен в корзину product=1 qty=2
+WARNING 2026-09-11 15:35:00,061 log Forbidden (Permission denied): /manage/product-types/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 763, in model_list
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+WARNING 2026-09-11 15:35:00,065 log Forbidden (Permission denied): /manage/product-types/add/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 771, in model_create
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+WARNING 2026-09-11 15:35:03,412 log Forbidden (Permission denied): /stats/
+Traceback (most recent call last):
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/.venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denchik/453503_Pometko_23/IGI/LR5/catalog/views.py", line 457, in stats
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+INFO 2026-09-11 15:35:05,368 views Создан объект product-types: Развивающие
+INFO 2026-09-11 15:35:05,382 views Обновлён объект product-types: Развивающие обновлённые
+INFO 2026-09-11 15:35:05,395 views Удалён объект product-types: Развивающие обновлённые
+WARNING 2026-09-11 15:44:53,450 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:44:53,451 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-dcyp0rl8 because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:44:54,910 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:44:55,257 font_manager generated new fontManager
+WARNING 2026-09-11 15:44:56,852 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:44:56,853 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-zjjnzg0t because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:44:57,934 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:44:58,521 font_manager generated new fontManager
+WARNING 2026-09-11 15:45:03,075 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:45:03,076 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-kyszgyxo because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:45:05,958 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:45:06,865 font_manager generated new fontManager
+WARNING 2026-09-11 15:45:58,177 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 15:45:58,178 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-m_85ov2e because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 15:45:59,286 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 15:45:59,982 font_manager generated new fontManager
+WARNING 2026-09-11 16:01:37,480 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:01:37,481 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-uozyba7o because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:01:38,643 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:01:39,362 font_manager generated new fontManager
+WARNING 2026-09-11 16:01:40,937 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:01:40,938 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-qoq36umu because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:01:41,857 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:01:42,613 font_manager generated new fontManager
+WARNING 2026-09-11 16:01:47,157 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:01:47,158 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-1td21q7d because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:01:50,105 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:01:51,103 font_manager generated new fontManager
+WARNING 2026-09-11 16:02:22,791 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:02:22,791 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-_sgsgwr1 because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:02:23,764 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:02:24,476 font_manager generated new fontManager
+WARNING 2026-09-11 16:02:25,640 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:02:25,641 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-wwfplsuz because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:02:26,535 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:02:26,798 font_manager generated new fontManager
+WARNING 2026-09-11 16:02:29,882 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:02:29,882 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-0imm9p7z because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:02:32,047 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:02:32,667 font_manager generated new fontManager
+WARNING 2026-09-11 16:10:40,410 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:10:40,411 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-70bwkdjz because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:10:41,436 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:10:42,295 font_manager generated new fontManager
+WARNING 2026-09-11 16:11:06,376 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:11:06,377 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-gd3xj486 because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:11:07,787 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:11:08,199 font_manager generated new fontManager
+WARNING 2026-09-11 16:11:12,493 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:11:12,494 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-2xzr0nxg because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:11:16,550 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:11:17,280 font_manager generated new fontManager
