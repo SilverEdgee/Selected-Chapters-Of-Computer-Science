@@ -113,6 +113,38 @@
     &lt;/p&gt;
 &lt;/article&gt;</code></pre>
 
+        <h3>Пример списка подсказок datalist</h3>
+        <p><code>&lt;datalist&gt;</code> предлагает готовые варианты для поля, но, в отличие от <code>&lt;select&gt;</code>, не запрещает пользователю написать собственное значение.</p>
+        <p>
+            <label for="favorite-toy-type">Любимый тип игрушки:</label>
+            <input type="text" id="favorite-toy-type" name="favorite_toy_type" list="toy-type-suggestions" placeholder="Начните вводить название">
+            <datalist id="toy-type-suggestions">
+                <option value="Конструктор"></option>
+                <option value="Мягкая игрушка"></option>
+                <option value="Настольная игра"></option>
+                <option value="Развивающая игрушка"></option>
+                <option value="Игрушечный транспорт"></option>
+            </datalist>
+        </p>
+        <pre><code>&lt;label for="favorite-toy-type"&gt;Любимый тип игрушки:&lt;/label&gt;
+&lt;input type="text"
+       id="favorite-toy-type"
+       name="favorite_toy_type"
+       list="toy-type-suggestions"
+       placeholder="Начните вводить название"&gt;
+
+&lt;datalist id="toy-type-suggestions"&gt;
+    &lt;option value="Конструктор"&gt;&lt;/option&gt;
+    &lt;option value="Мягкая игрушка"&gt;&lt;/option&gt;
+    &lt;option value="Настольная игра"&gt;&lt;/option&gt;
+&lt;/datalist&gt;</code></pre>
+        <ul>
+            <li><code>for="favorite-toy-type"</code> связывает подпись с полем по его <code>id</code>.</li>
+            <li><code>list="toy-type-suggestions"</code> подключает к полю список с таким же <code>id</code>.</li>
+            <li><code>value</code> у каждого <code>&lt;option&gt;</code> задаёт предлагаемое значение.</li>
+            <li><code>placeholder</code> показывает подсказку внутри пустого поля.</li>
+        </ul>
+
         <h3>Назначение тегов и специальные атрибуты</h3>
         <table>
             <caption>Текстовые элементы, показанные на странице</caption>

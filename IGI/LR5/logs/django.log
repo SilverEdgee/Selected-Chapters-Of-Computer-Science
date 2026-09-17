@@ -1732,3 +1732,19 @@ WARNING 2026-09-11 16:11:12,493 __init__ /home/denchik/.config/matplotlib is not
 WARNING 2026-09-11 16:11:12,494 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-2xzr0nxg because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 INFO 2026-09-11 16:11:16,550 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
 INFO 2026-09-11 16:11:17,280 font_manager generated new fontManager
+WARNING 2026-09-11 16:32:37,932 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:32:37,933 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-4bst9p3_ because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:32:39,069 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:32:39,719 font_manager generated new fontManager
+WARNING 2026-09-11 16:33:05,277 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:33:05,278 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-ieteybhn because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:33:06,361 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:33:07,086 font_manager generated new fontManager
+WARNING 2026-09-11 16:33:08,895 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:33:08,895 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-_ohkhqrt because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:33:09,925 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:33:10,773 font_manager generated new fontManager
+WARNING 2026-09-11 16:33:15,472 __init__ /home/denchik/.config/matplotlib is not a writable directory
+WARNING 2026-09-11 16:33:15,473 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-mp821mj7 because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+INFO 2026-09-11 16:33:19,046 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+INFO 2026-09-11 16:33:20,114 font_manager generated new fontManager
