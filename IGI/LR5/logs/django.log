@@ -1748,3 +1748,5 @@ WARNING 2026-09-11 16:33:15,472 __init__ /home/denchik/.config/matplotlib is not
 WARNING 2026-09-11 16:33:15,473 __init__ Matplotlib created a temporary cache directory at /tmp/matplotlib-mp821mj7 because there was an issue with the default path (/home/denchik/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 INFO 2026-09-11 16:33:19,046 font_manager Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
 INFO 2026-09-11 16:33:20,114 font_manager generated new fontManager
+INFO 2026-09-17 21:23:26,511 autoreload Watching for file changes with StatReloader
+INFO 2026-09-18 10:09:18,254 autoreload Watching for file changes with StatReloader
