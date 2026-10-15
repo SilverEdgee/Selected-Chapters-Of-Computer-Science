@@ -2,6 +2,7 @@
 {% block title %}Словарь терминов и понятий{% endblock %}
 {% block content %}
 <h1>Словарь терминов и понятий</h1>
+<div class="faq-list">
 {% for entry in entries %}
     <details>
         <summary>{{ entry.question }}</summary>
@@ -11,4 +12,5 @@
 {% empty %}
     <p>Пока нет записей.</p>
 {% endfor %}
+</div>
 {% endblock %}

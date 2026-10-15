@@ -178,6 +178,10 @@ def about(request):
     return render(request, 'catalog/about.html', page_context(company=company, milestones=milestones))
 
 
+def css_guide(request):
+    return render(request, 'catalog/css_guide.html', page_context())
+
+
 def toy_selection(request):
     products = Product.objects.filter(is_active=True).select_related('product_type', 'toy_model').prefetch_related('tags')
     categories = ProductType.objects.all()
@@ -227,7 +231,7 @@ def toy_selection(request):
     )
 def news_list(request):
     articles = NewsArticle.objects.filter(is_published=True)
-    paginator = Paginator(articles, 5)
+    paginator = Paginator(articles, 7)
     page_obj = paginator.get_page(request.GET.get('page'))
     return render(request, 'catalog/news_list.html', page_context(articles=page_obj, page_obj=page_obj))
 def news_detail(request, pk):

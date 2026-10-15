@@ -9,6 +9,7 @@ from .forms import RegistrationForm
 from .services import fetch_external_api_results, fetch_currency_rates, fetch_minsk_weather
 from .models import Client as ToyClient, CompanyInfo, CompanyMilestone, ContactPerson, Employee, NewsArticle, Partner, Product, ProductType, PromoCode, Review, Sale, SaleItem, Tag, ToyModel
 from unittest.mock import Mock, patch
+from pathlib import Path
 def adult_birth_date(years=25):
     return timezone.localdate() - timedelta(days=365 * years)
 class CoreDomainTests(TestCase):
@@ -55,9 +56,26 @@ class CoreDomainTests(TestCase):
         detail = self.client.get(reverse('catalog:news_detail', args=[self.article.pk]))
         self.assertContains(detail, 'Полный текст')
     def test_public_pages_work(self):
-        for name in ['catalog:about', 'catalog:toy_selection', 'catalog:glossary', 'catalog:contacts', 'catalog:privacy', 'catalog:vacancies', 'catalog:reviews', 'catalog:promo_codes']:
+        for name in ['catalog:about', 'catalog:css_guide', 'catalog:toy_selection', 'catalog:glossary', 'catalog:contacts', 'catalog:privacy', 'catalog:vacancies', 'catalog:reviews', 'catalog:promo_codes']:
             response = self.client.get(reverse(name))
             self.assertEqual(response.status_code, 200)
+
+    def test_css_lab_two_features_are_present(self):
+        css = (Path(__file__).resolve().parent.parent / 'static/catalog/css/styles.css').read_text(encoding='utf-8')
+        required_fragments = [
+            '@import url(',
+            'a[href^="mailto:"]',
+            'a[href$=".txt"]',
+            'input:out-of-range',
+            '::selection',
+            'display: grid',
+            'display: flex',
+            'border-image:',
+            '@keyframes bear-hug',
+            '@media (max-width: 820px)',
+        ]
+        for fragment in required_fragments:
+            self.assertIn(fragment, css)
 
     def test_toy_selection_filters_by_category_and_budget(self):
         response = self.client.get(reverse('catalog:toy_selection'), {

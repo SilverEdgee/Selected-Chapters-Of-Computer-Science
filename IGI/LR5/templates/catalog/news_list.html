@@ -2,8 +2,9 @@
 {% block title %}Новости{% endblock %}
 {% block content %}
 <h1>Новости</h1>
+<div class="news-list">
 {% for article in articles %}
-    <article class="card two-col" itemscope itemtype="https://schema.org/NewsArticle">
+    <article class="card two-col news-card" itemscope itemtype="https://schema.org/NewsArticle">
         {% if article.image_source %}
         <figure>
             <picture>
@@ -13,11 +14,12 @@
             <figcaption>Иллюстрация к новости «{{ article.title }}»</figcaption>
         </figure>
         {% endif %}
-        <div><h2 itemprop="headline">{{ article.title }}</h2><p itemprop="description">{{ article.summary }}</p><p class="muted">Дата: <time itemprop="datePublished" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'d/m/Y H:i' }}</time></p><p><a class="button" href="{% url 'catalog:news_detail' article.pk %}" itemprop="url">Читать далее</a></p></div>
+        <div><h2 itemprop="headline">{{ article.title }}</h2><p class="news-summary" itemprop="description">{{ article.summary }}</p><p class="muted">Дата: <time itemprop="datePublished" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'d/m/Y H:i' }}</time></p><p><a class="button" href="{% url 'catalog:news_detail' article.pk %}" itemprop="url">Читать далее</a></p></div>
     </article>
 {% empty %}
     <p>Новостей пока нет.</p>
 {% endfor %}
+</div>
 {% if page_obj and page_obj.paginator.num_pages > 1 %}
 <div class="card">
     {% if page_obj.has_previous %}

@@ -1,0 +1,78 @@
+{% extends 'catalog/base.html' %}
+{% block title %}CSS-стенд — Фабрика игрушек{% endblock %}
+{% block meta_description %}Страница с примерами CSS-оформления проекта фабрики игрушек.{% endblock %}
+{% block content %}
+<article class="css-showcase">
+    <header class="showcase-hero">
+        <p class="eyebrow">Добрая игрушка</p>
+        <h1>CSS-стенд</h1>
+        <p class="lead">Цвет, форма, текст, сетки и движение.</p>
+        <p class="showcase-actions"><a class="button" href="#cards">Карточки</a> <a class="button secondary" href="#form-demo">Форма</a></p>
+    </header>
+
+    <section id="cards">
+        <h2>Карточки</h2>
+        <div class="showcase-card-grid">
+            <article class="showcase-card showcase-card-green"><span class="showcase-icon">🧸</span><h3>Мягкие игрушки</h3><p>Тёплая фактура, скругления и мягкая тень.</p></article>
+            <article class="showcase-card showcase-card-sun"><span class="showcase-icon">🧩</span><h3>Конструкторы</h3><p>Яркий градиент, рамка и изменение масштаба.</p></article>
+            <article class="showcase-card showcase-card-dark"><span class="showcase-icon">🚂</span><h3>Игрушечный транспорт</h3><p>Контрастный фон, светлый текст и цветной акцент.</p></article>
+        </div>
+    </section>
+
+    <section class="training-panel typography-showcase">
+        <h2>Текст</h2>
+        <p class="display-text">Игрушки с добрым характером</p>
+        <p class="small-caps-text">безопасность · творчество · развитие</p>
+        <p class="drop-cap-text">Каждая игрушка проходит проверку материалов, сборки и упаковки перед отправкой покупателю.</p>
+        <blockquote><p>Детство начинается с игры.</p></blockquote>
+        <p><mark>Выделение</mark> <strong>важность</strong> <em>интонация</em> H<sub>2</sub>O 10<sup>3</sup></p>
+    </section>
+
+    <section><h2>Flexbox</h2><div class="flex-demo"><span>Дерево</span><span>Текстиль</span><span>Картон</span><span>Биопластик</span></div></section>
+
+    <section>
+        <h2>Grid</h2>
+        <div class="grid-demo showcase-grid"><span class="grid-large">Большая ячейка</span><span>01</span><span>02</span><span>03</span><span>04</span></div>
+    </section>
+
+    <section class="training-panel">
+        <h2>Многоколоночный текст</h2>
+        <div class="columns-demo">В мастерской создаются деревянные конструкторы, мягкие игрушки и развивающие наборы. Дизайнеры продумывают форму и цвет каждой детали. Специалисты проверяют прочность соединений и качество материалов. Готовые изделия упаковываются и отправляются покупателям. Каждая коллекция создаётся для безопасной и интересной игры.</div>
+    </section>
+
+    <section>
+        <h2>Блочная модель и позиционирование</h2>
+        <div class="box-model-demo">margin · outline · border · padding · content</div>
+        <div class="position-demo">Основной блок<span>absolute</span></div>
+    </section>
+
+    <section>
+        <h2>Список и таблица</h2>
+        <ul class="benefit-list"><li>Собственный маркер</li><li>Чередование элементов</li><li>Отступы и интервалы</li></ul>
+        <div class="table-scroll"><table>
+            <caption>Проверка демонстрационной партии</caption>
+            <thead><tr><th>Этап</th><th>Количество</th><th>Результат</th></tr></thead>
+            <tbody><tr><td>Материалы</td><td>200</td><td>Пройден</td></tr><tr><td>Сборка</td><td>198</td><td>Пройден</td></tr><tr><td>Упаковка</td><td></td><td>Ожидается</td></tr></tbody>
+        </table></div>
+    </section>
+
+    <section id="form-demo" class="training-panel">
+        <h2>Форма</h2>
+        <form class="showcase-form">
+            <p><label for="showcase-name">Название игрушки</label><br><input id="showcase-name" type="text" placeholder="Например, медведь" required></p>
+            <p><label for="showcase-age">Возраст</label><br><input id="showcase-age" type="number" value="25" min="1" max="16"></p>
+            <p><input id="showcase-safe" type="checkbox" checked><label for="showcase-safe"> Безопасные материалы</label></p>
+            <p><label for="showcase-disabled">Недоступное поле</label><br><input id="showcase-disabled" type="text" value="Отключено" disabled></p>
+            <p><button type="button">Обычная кнопка</button> <button type="button" disabled>Заблокировано</button></p>
+        </form>
+    </section>
+
+    <section>
+        <h2>Трансформация и переход</h2>
+        <div class="transition-demo">Наведите курсор</div>
+        <div class="shape-row"><span class="shape shape-circle"></span><span class="shape shape-square"></span><span class="shape shape-diamond"></span></div>
+    </section>
+
+    <section class="preloader-demo"><h2>Анимация</h2><div class="tilt-loader"></div></section>
+</article>
+{% endblock %}

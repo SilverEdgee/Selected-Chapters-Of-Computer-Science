@@ -5,7 +5,7 @@
 {% block content %}
 <section class="banner-gallery">
     <h1 id="main-title">Игрушки с добрым характером</h1>
-    <p>Создаём безопасные игрушки для творчества и развития. Доставка по Беларуси, проверенные материалы и честная гарантия.</p>
+    <p class="lead">Создаём безопасные игрушки для творчества и развития. Доставка по Беларуси, проверенные материалы и честная гарантия.</p>
     <p><a href="#catalog">Перейти к каталогу</a></p>
     <h2>Рекламные баннеры</h2>
     <figure>
@@ -33,7 +33,7 @@
 <section id="catalog">
     <p class="eyebrow">Каталог продукции</p>
     <h2 id="catalog-title">Популярные игрушки</h2>
-    <div class="grid">
+    <div class="grid catalog-grid">
         {% for product in featured_products %}
         <article class="card product-card" itemscope itemtype="https://schema.org/Product">
             <figure class="product-art">
@@ -66,7 +66,7 @@
     <p class="eyebrow">Журнал фабрики</p>
     <h2 id="latest-title">Последняя опубликованная статья</h2>
     {% if latest_article %}
-        <article class="card two-col" itemscope itemtype="https://schema.org/NewsArticle">
+        <article class="card two-col latest-article" itemscope itemtype="https://schema.org/NewsArticle">
             <div>{% if latest_article.image_source %}<picture><source media="(max-width: 600px)" srcset="{{ latest_article.image_small_source }}" type="image/webp"><img src="{{ latest_article.image_source }}" width="360" alt="{{ latest_article.title }}" itemprop="image" loading="lazy"></picture>{% endif %}</div>
             <div>
                 <h3 itemprop="headline">{{ latest_article.title }}</h3>
@@ -91,6 +91,23 @@
         </li>
         {% empty %}<li>Партнёры пока не добавлены.</li>{% endfor %}
     </ul>
+</section>
+
+<section>
+    <h2>Мишка отпускает воздушные шарики</h2>
+    <figure class="toy-animation">
+        <span class="balloon">🎈</span>
+        <span class="balloon">🎈</span>
+        <span class="balloon">🎈</span>
+        <span class="animated-bear">🧸</span>
+        <p class="animation-name">Фабрика «Добрая игрушка»</p>
+    </figure>
+</section>
+
+<section class="preloader-demo">
+    <h2>Учебный прелоадер</h2>
+    <div class="tilt-loader"></div>
+    <p>Фигура поочерёдно вращается вправо и влево, меняя скорость и наклон.</p>
 </section>
 
 {% if month_calendar %}

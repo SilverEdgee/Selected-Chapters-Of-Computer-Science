@@ -8,39 +8,40 @@
     <meta name="keywords" content="игрушки, фабрика игрушек, каталог, детские товары, Минск"> <!--deprecated-->
     <meta name="author" content="Фабрика игрушек">
     <link rel="icon" href="{% static 'catalog/images/favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'catalog/css/styles.css' %}">
     <title>{% block title %}Фабрика игрушек{% endblock %}</title>
     {% block extra_head %}{% endblock %}
 </head>
 <body id="top" data-site="toy-factory">
-    <a href="#main-content">Перейти к содержимому</a>
-    <header itemscope itemtype="https://schema.org/Organization">
-        <p>
-            <a href="{% url 'catalog:home' %}" itemprop="url" title="На главную" accesskey="h">
+    <a class="skip-link" href="#main-content">Перейти к содержимому</a>
+    <header class="site-header" itemscope itemtype="https://schema.org/Organization">
+        <p class="brand">
+            <a class="brand-link" href="{% url 'catalog:home' %}" itemprop="url" title="На главную" accesskey="h">
                 <img src="{% static 'catalog/images/logo.svg' %}" width="46" height="46" alt="Логотип фабрики игрушек" itemprop="logo">
                 <strong itemprop="name">Добрая игрушка</strong>
             </a>
         </p>
-        <nav>
-            <a href="{% url 'catalog:products' %}">Каталог</a> |
-            <a href="{% url 'catalog:about' %}">О компании</a> |
-            <a href="{% url 'catalog:news' %}">Новости</a> |
-            <a href="{% url 'catalog:contacts' %}">Контакты</a> |
+        <nav class="main-nav">
+            <a href="{% url 'catalog:products' %}">Каталог</a>
+            <a href="{% url 'catalog:about' %}">О компании</a>
+            <a href="{% url 'catalog:news' %}">Новости</a>
+            <a href="{% url 'catalog:contacts' %}">Контакты</a>
             <a href="{% url 'catalog:cart' %}">Корзина ({{ cart_item_count }})</a>
-        </nav>HTML
-        <p>
+        </nav>
+        <div class="account-links">
             {% if user.is_authenticated %}
                 <a href="{% url 'catalog:dashboard' %}">Кабинет</a>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}<button type="submit">Выход</button>
                 </form>
             {% else %}
-                <a href="{% url 'login' %}">Вход</a> |
+                <a href="{% url 'login' %}">Вход</a>
                 <a href="{% url 'catalog:register' %}">Регистрация</a>
             {% endif %}
-        </p>
+        </div>
     </header>
 
-    <aside>
+    <aside class="sidebar">
         <h2>Разделы сайта</h2>
         <nav>
             <ul>
@@ -52,6 +53,7 @@
                 <li><a href="{% url 'catalog:promo_codes' %}">Промокоды</a></li>
                 <li><a href="{% url 'catalog:privacy' %}">Конфиденциальность</a></li>
                 <li><a href="{% url 'catalog:api_demo' %}">Полезные API</a></li>
+                <li><a href="{% url 'catalog:css_guide' %}">Памятка CSS</a></li>
                 {% if user.is_superuser %}<li><a href="{% url 'catalog:stats' %}">Статистика</a></li>{% endif %}
             </ul>
         </nav>
@@ -94,7 +96,7 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    <footer class="site-footer">
         <hr>
         <address itemscope itemtype="https://schema.org/PostalAddress">
             <strong>Фабрика «Добрая игрушка»</strong><br>

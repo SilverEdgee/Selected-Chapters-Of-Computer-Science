@@ -100,6 +100,7 @@ class Command(BaseCommand):
             'Каталог': reverse('catalog:products'),
             'Подбор игрушки': f"{reverse('catalog:toy_selection')}?submit=1&budget=50",
             'О компании': reverse('catalog:about'),
+            'Памятка CSS': reverse('catalog:css_guide'),
             'Новости': reverse('catalog:news'),
             'Словарь': reverse('catalog:glossary'),
             'Контакты': reverse('catalog:contacts'),

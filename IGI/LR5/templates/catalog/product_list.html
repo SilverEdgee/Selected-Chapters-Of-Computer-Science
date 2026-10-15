@@ -1,4 +1,5 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 {% block title %}Товары{% endblock %}
 {% block content %}
 <h1>Товары</h1>
@@ -18,37 +19,32 @@
     </select>
     <button type="submit">Применить</button>
 </form>
-<table>
-    <thead>
-        <tr>
-            <th scope="col">Код</th>
-            <th scope="col">Название</th>
-            <th scope="col">Тип</th>
-            <th scope="col">Модель</th>
-            <th scope="col">Цена, BYN</th>
-            <th scope="col">Теги</th>
-            <th scope="col">Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for product in products %}
-        <tr>
-            <td><code>{{ product.code }}</code></td>
-            <th scope="row">{{ product.name }}</th>
-            <td>{{ product.product_type }}</td>
-            <td>{{ product.toy_model }}</td>
-            <td>{{ product.price }}</td>
-            <td>{% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-            <td class="actions">
-                <a class="button secondary" href="{% url 'catalog:product_detail' product.pk %}">Открыть</a>
-                <form method="post" action="{% url 'catalog:cart_add' product.pk %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button type="submit" title="Добавить в корзину">🛒 В корзину</button></form>
-            </td>
-        </tr>
-    {% empty %}
-        <tr><td colspan="7">Нет товаров.</td></tr>
-    {% endfor %}
-    </tbody>
-</table>
+<section class="catalog-grid">
+{% for product in products %}
+    <article class="card product-card" itemscope itemtype="https://schema.org/Product">
+        <figure>
+            {% if product.image_source %}
+                <img src="{{ product.image_source }}" width="300" alt="{{ product.name }}" itemprop="image" loading="lazy">
+            {% elif forloop.counter|divisibleby:'2' %}
+                <img src="{% static 'catalog/images/banner-summer-300.webp' %}" alt="Иллюстрация товара {{ product.name }}" itemprop="image" loading="lazy">
+            {% else %}
+                <img src="{% static 'catalog/images/banner-workshop-300.webp' %}" alt="Иллюстрация товара {{ product.name }}" itemprop="image" loading="lazy">
+            {% endif %}
+            <figcaption><code>{{ product.code }}</code></figcaption>
+        </figure>
+        <h2 itemprop="name">{{ product.name }}</h2>
+        <p><strong>Тип:</strong> {{ product.product_type }}<br><strong>Модель:</strong> {{ product.toy_model }}</p>
+        <p><strong>Теги:</strong> {% for tag in product.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</p>
+        <p class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">{{ product.price }}</span> <span itemprop="priceCurrency">BYN</span></p>
+        <div class="product-actions">
+            <a class="button secondary" href="{% url 'catalog:product_detail' product.pk %}" itemprop="url">Открыть</a>
+            <form method="post" action="{% url 'catalog:cart_add' product.pk %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button type="submit" title="Добавить в корзину">🛒 В корзину</button></form>
+        </div>
+    </article>
+{% empty %}
+    <p>Нет товаров.</p>
+{% endfor %}
+</section>
 {% if page_obj and page_obj.paginator.num_pages > 1 %}
 <div class="card">
     {% if page_obj.has_previous %}

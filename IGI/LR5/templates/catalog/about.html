@@ -6,15 +6,15 @@
 <article itemscope itemtype="https://schema.org/Organization">
     <h1 itemprop="name">О компании</h1>
     {% if company %}
-    <section>
-        {% if company.logo_source %}<img src="{{ company.logo_source }}" width="120" alt="Логотип {{ company.title }}" itemprop="logo">{% else %}<img src="{% static 'catalog/images/logo.svg' %}" width="120" height="120" alt="Логотип фабрики" itemprop="logo">{% endif %}
+    <section class="company-intro">
+        {% if company.logo_source %}<img class="company-logo" src="{{ company.logo_source }}" width="120" alt="Логотип {{ company.title }}" itemprop="logo">{% else %}<img class="company-logo" src="{% static 'catalog/images/logo.svg' %}" width="120" height="120" alt="Логотип фабрики" itemprop="logo">{% endif %}
         <h2 id="company-title">{{ company.title }}</h2>
         <p itemprop="description">{{ company.description }}</p>
         <p><strong>Миссия:</strong> <em>{{ company.mission }}</em></p>
         <p><small>Обновлено: <time datetime="{{ company.updated_at|date:'c' }}">{{ company.updated_at|date:'d/m/Y H:i' }}</time></small></p>
     </section>
 
-    <figure>
+    <figure class="company-media">
         {% if company.video_url %}
         <iframe src="{{ company.video_url }}" width="360" height="240" title="Видео о фабрике" loading="lazy" allowfullscreen></iframe>
         {% else %}
@@ -28,17 +28,19 @@
 
     <section>
         <h2 id="history-title">История по годам</h2>
+        <ol class="history-list">
         {% for milestone in milestones %}
-        <article><h3><time datetime="{{ milestone.year }}">{{ milestone.year }}</time> — {{ milestone.title }}</h3><p>{{ milestone.description }}</p></article>
-        {% empty %}<p>История компании пока не заполнена.</p>{% endfor %}
+        <li><article><h3><time datetime="{{ milestone.year }}">{{ milestone.year }}</time> — {{ milestone.title }}</h3><p>{{ milestone.description }}</p></article></li>
+        {% empty %}<li>История компании пока не заполнена.</li>{% endfor %}
+        </ol>
     </section>
 
     <section>
         <h2 id="requisites-title">Реквизиты</h2>
-        <p>{{ company.requisites|linebreaksbr }}</p>
+        <p class="company-requisites">{{ company.requisites|linebreaksbr }}</p>
     </section>
 
-    <section>
+    <section class="certificate">
         <h2 id="certificate-title">Сертификат</h2>
         {% if company.certificate_image_source %}
         <figure>
@@ -70,7 +72,7 @@
         </table>
     </section>
 
-    <section>
+    <section class="article-prose">
         <h2 id="language-title">Как мы говорим о качестве</h2>
         <p><dfn id="eco-toy">Экологичная игрушка</dfn> — изделие, для которого учитываются безопасность материалов и возможность переработки упаковки. Сокращение <abbr title="Технический регламент Таможенного союза">ТР ТС</abbr> встречается в документах о безопасности. В формуле контроля риск обозначим как <var>R</var>, а допустимое значение — R&lt;10<sup>−3</sup>.</p>
         <blockquote cite="https://www.unicef.org/parenting/child-care/what-is-free-play"><p>Игра помогает ребёнку исследовать мир, придумывать правила и учиться взаимодействию.</p><footer>По материалам <cite>UNICEF Parenting</cite></footer></blockquote>

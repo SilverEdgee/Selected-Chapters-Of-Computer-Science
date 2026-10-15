@@ -5,7 +5,7 @@
 <h1>Контакты</h1>
 <p class="lead">Свяжитесь с нужным специалистом напрямую или приезжайте в наш демонстрационный зал.</p>
 <figure><picture><source media="(max-width: 600px)" srcset="{% static 'catalog/images/contact-team-360.webp' %}" type="image/webp"><img src="{% static 'catalog/images/contact-team-800.webp' %}" alt="Команда фабрики игрушек в мастерской"></picture><figcaption>Команда производства, дизайна, контроля качества и клиентского сервиса.</figcaption></figure>
-<div class="grid">
+<div class="contacts-flex">
 {% for person in contacts %}
     <article class="card" itemscope itemtype="https://schema.org/Person">
         {% if person.photo_source %}<figure><img src="{{ person.photo_source }}" width="180" alt="{{ person.full_name }}" itemprop="image" loading="lazy"><figcaption>{{ person.role }}</figcaption></figure>{% endif %}

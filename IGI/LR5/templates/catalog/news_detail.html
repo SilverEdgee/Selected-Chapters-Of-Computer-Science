@@ -14,7 +14,7 @@
         <figcaption>Иллюстрация к новости «{{ article.title }}»</figcaption>
     </figure>
     {% endif %}
-    <div itemprop="articleBody">{{ article.body|linebreaks }}</div>
+    <div class="news-body" itemprop="articleBody">{{ article.body|linebreaks }}</div>
     <p class="muted">Опубликовано: <time itemprop="datePublished" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'d/m/Y H:i' }}</time></p>
     <p><a href="{% url 'catalog:news' %}">← Ко всем новостям</a></p>
 </article>

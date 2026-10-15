@@ -4,18 +4,22 @@
 <h1>Промокоды и купоны</h1>
 <div class="card">
     <h2>Действующие</h2>
+    <ul class="promo-list">
     {% for promo in active_promo_codes %}
-        <p><strong>{{ promo.code }}</strong> — {{ promo.description }} ({{ promo.discount_percent }}%)</p>
+        <li><strong>{{ promo.code }}</strong> — {{ promo.description }} ({{ promo.discount_percent }}%)</li>
     {% empty %}
-        <p>Нет действующих промокодов.</p>
+        <li>Нет действующих промокодов.</li>
     {% endfor %}
+    </ul>
 </div>
-<div class="card">
+<div class="card promo-archive">
     <h2>Архив</h2>
+    <ul class="promo-list">
     {% for promo in archived_promo_codes %}
-        <p><strong>{{ promo.code }}</strong> — {{ promo.description }} ({{ promo.discount_percent }}%)</p>
+        <li><strong>{{ promo.code }}</strong> — {{ promo.description }} ({{ promo.discount_percent }}%)</li>
     {% empty %}
-        <p>Архив пуст.</p>
+        <li>Архив пуст.</li>
     {% endfor %}
+    </ul>
 </div>
 {% endblock %}
